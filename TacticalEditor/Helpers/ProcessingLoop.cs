@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using Newtonsoft.Json;
 using TacticalEditor.Models;
 
 namespace TacticalEditor.Helpers
@@ -35,7 +32,7 @@ namespace TacticalEditor.Helpers
             while (true)
             {
                 _udpHelper.Receive();
-                _udpHelper.Send(_route.Get(), "255.255.255.255",20020);
+               // _udpHelper.Send(_route.Get(), "255.255.255.255",20020);
                 Thread.Sleep(20);
             }
         }
