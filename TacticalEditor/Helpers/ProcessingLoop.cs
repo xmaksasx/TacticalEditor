@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using Newtonsoft.Json;
 using TacticalEditor.Models;
 
 namespace TacticalEditor.Helpers
@@ -35,22 +34,9 @@ namespace TacticalEditor.Helpers
             while (true)
             {
                 _udpHelper.Receive();
-                _udpHelper.Send(_route.Get(), "255.255.255.255",20020);
+                _udpHelper.Send(_route.GetByte(), "255.255.255.255",20020);
                 Thread.Sleep(20);
             }
         }
-
-
-
-        public static byte[] ObjectToByte<T>(T obj, int size)
-        {
-            var bytes = new byte[size];
-            var ptr = Marshal.AllocHGlobal(size);
-            Marshal.StructureToPtr(obj, ptr, false);
-            Marshal.Copy(ptr, bytes, 0, size);
-            Marshal.FreeHGlobal(ptr);
-            return bytes;
-        }
-
     }
 }

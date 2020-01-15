@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace TacticalEditor.Models
 {
@@ -11,14 +13,11 @@ namespace TacticalEditor.Models
         public double CountAirPoints;
         public List<AirPoint> AirPoints = new List<AirPoint>();
 
-        public byte[] ToByte(Route route)
+        public byte[] GetByte()
         {
-            List<byte> result = new List<byte>();
-            result.AddRange(BitConverter.GetBytes(CountAirPoints));
-            foreach (var airPoint in route.AirPoints)
-                result.AddRange(ObjectToByte(airPoint));
-            return result.ToArray();
+            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this));
         }
+
         public static byte[] ObjectToByte<T>(T obj)
         {
             var size = Marshal.SizeOf(obj);
