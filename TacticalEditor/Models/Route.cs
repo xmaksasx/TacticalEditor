@@ -15,6 +15,10 @@ namespace TacticalEditor.Models
 
         public byte[] GetByte()
         {
+            CountAirPoints = 120;
+            AirPoints.Add(new AirPoint() { H = 23.444 });
+            var bytes =  Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this));
+            Route route = JsonConvert.DeserializeObject<Route>(Encoding.UTF8.GetString(bytes));
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this));
         }
 
