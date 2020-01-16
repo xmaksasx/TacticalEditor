@@ -22,6 +22,7 @@ namespace TacticalEditor.Models
         private void PpmCollection(List<AirPoint> airPoint)
         {
             CountAirPoints++;
+            AirPoints = airPoint;
         }
 
 

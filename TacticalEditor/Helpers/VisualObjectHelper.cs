@@ -16,7 +16,7 @@ namespace TacticalEditor.Helpers
     {
         private readonly Canvas _plotter;
         private readonly CoordinateHelper _coordinateHelper;
-        private int _countNavigationPoint = 1;
+        private int _countNavigationPoint = 0;
         private Line _lastLine;
         private AirportPoint _currentAirport;
         private RoutePoints _routePoints;
@@ -37,24 +37,41 @@ namespace TacticalEditor.Helpers
 
         public void AddVisualPpm(Point point)
         {
-            var sizeMap = (uint) _plotter.Height;
-            _coordinateHelper.PixelToLatLon(point, sizeMap, out var lat, out var lon);
-            PpmPoint ppmPoint = new PpmPoint();
-            ppmPoint.Lat = lat;
-            ppmPoint.Lon = lon;
-            ppmPoint.NumberInRoute = _countNavigationPoint;
-            ppmPoint.Screen.RelativeX = point.X / sizeMap;
-            ppmPoint.Screen.RelativeY = point.Y / sizeMap;
-            ppmPoint.Screen.SizeMap = sizeMap;
-            ppmPoint.Screen.RouteLineIn = _lastLine;
             _countNavigationPoint++;
-            _routePoints.PPM.Add(new Ppm {RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap});
-            _airPoints.Add(ppmPoint);
+            var ppmPoint = PreparePpmPoint(point);
+            _airPoints.Add(ppmPoint.AirPoint);
             EventsHelper.OnPpmCollectionEvent(_airPoints);
             AddVisualToPlotter(new VisualPpm(ppmPoint), point);
         }
 
-        public void Clear()
+
+        private PpmPoint PreparePpmPoint(Point point)
+        {
+            var sizeMap = (uint)_plotter.Height;
+      
+            PpmPoint ppmPoint = new PpmPoint();
+
+            ppmPoint.NumberInRoute = _countNavigationPoint;
+            ppmPoint.Screen.RelativeX = point.X / sizeMap;
+            ppmPoint.Screen.RelativeY = point.Y / sizeMap;
+            ppmPoint.Screen.SizeMap = sizeMap;
+            ppmPoint.AirPoint = PrepareAirPoint(point);
+            ppmPoint.Screen.RouteLineIn = _lastLine;
+            _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+            return ppmPoint;
+        }
+
+        private AirPoint PrepareAirPoint(Point point)
+        {
+            var sizeMap = (uint)_plotter.Height;
+            AirPoint airPoint = new AirPoint();
+            _coordinateHelper.PixelToLatLon(point, sizeMap, out var lat, out var lon);
+            airPoint.Lat = lat;
+            airPoint.Lon = lon;
+            return airPoint;
+        }
+
+            public void Clear()
         {
             for(int i = _plotter.Children.Count - 1; i >= 0; i--)
             {
