@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Newtonsoft.Json;
+using TacticalEditor.Helpers;
 
 namespace TacticalEditor.Models
 {
@@ -13,24 +14,20 @@ namespace TacticalEditor.Models
         public double CountAirPoints;
         public List<AirPoint> AirPoints = new List<AirPoint>();
 
-        public byte[] GetByte()
+        public Route()
         {
-            CountAirPoints = 120;
-            AirPoints.Add(new AirPoint() { H = 23.444 });
-            var bytes =  Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this));
-            Route route = JsonConvert.DeserializeObject<Route>(Encoding.UTF8.GetString(bytes));
-            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this));
+            EventsHelper.PpmCollectionEvent += PpmCollection;
         }
 
-        public static byte[] ObjectToByte<T>(T obj)
+        private void PpmCollection(List<AirPoint> airPoint)
         {
-            var size = Marshal.SizeOf(obj);
-            var bytes = new byte[size];
-            var ptr = Marshal.AllocHGlobal(size);
-            Marshal.StructureToPtr(obj, ptr, false);
-            Marshal.Copy(ptr, bytes, 0, size);
-            Marshal.FreeHGlobal(ptr);
-            return bytes;
+            CountAirPoints++;
+        }
+
+
+        public byte[] GetByte()
+        {
+            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this));
         }
     }
 }

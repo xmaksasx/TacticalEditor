@@ -37,18 +37,18 @@ namespace TacticalEditor.Helpers
 
         public void AddVisualPpm(Point point)
         {
-            var sizeMap = (uint)_plotter.Height;
+            var sizeMap = (uint) _plotter.Height;
             _coordinateHelper.PixelToLatLon(point, sizeMap, out var lat, out var lon);
             PpmPoint ppmPoint = new PpmPoint();
-            ppmPoint.NumberInRoute = _countNavigationPoint;
             ppmPoint.Lat = lat;
             ppmPoint.Lon = lon;
+            ppmPoint.NumberInRoute = _countNavigationPoint;
             ppmPoint.Screen.RelativeX = point.X / sizeMap;
             ppmPoint.Screen.RelativeY = point.Y / sizeMap;
             ppmPoint.Screen.SizeMap = sizeMap;
             ppmPoint.Screen.RouteLineIn = _lastLine;
             _countNavigationPoint++;
-            _routePoints.PPM.Add( new Ppm {RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+            _routePoints.PPM.Add(new Ppm {RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap});
             _airPoints.Add(ppmPoint);
             EventsHelper.OnPpmCollectionEvent(_airPoints);
             AddVisualToPlotter(new VisualPpm(ppmPoint), point);

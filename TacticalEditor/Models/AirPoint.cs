@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using TacticalEditor.Models.Points;
 
 namespace TacticalEditor.Models
 {

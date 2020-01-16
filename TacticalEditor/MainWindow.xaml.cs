@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TacticalEditor.Helpers;
@@ -19,6 +20,7 @@ namespace TacticalEditor
         public MainWindow()
         {
             InitializeComponent();
+            upcast();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -108,8 +110,54 @@ namespace TacticalEditor
 
         private void Close_OnClick(object sender, RoutedEventArgs e)
         {
+            _processingLoop.Destroy();
             Application.Current.Shutdown();
         }
+
+
+
+
+
+
+
+        class Base
+        {
+            public string str;
+        }
+
+        class NotBase : Base
+        {
+            public int i;
+            public int j;
+        }
+
+        private void upcast()
+        {
+            Base b = new Base();
+            NotBase notBase = new NotBase();
+            Base _base = (Base)notBase;
+          
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     enum MenuStates
@@ -118,4 +166,9 @@ namespace TacticalEditor
         Measure,
         Edit
     }
+
+
+
+
+
 }

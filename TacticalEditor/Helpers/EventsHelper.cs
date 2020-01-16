@@ -59,8 +59,6 @@ namespace TacticalEditor.Helpers
 
         #endregion
 
-
-
         #region Передает коллекцию ППМ'ов
 
         /// <summary>
@@ -85,6 +83,21 @@ namespace TacticalEditor.Helpers
         public static void OnMenuStatusEvent(MenuStates e)
         {
             MenuStatusEvent?.Invoke(e);
+        }
+
+        #endregion
+
+        #region Передает состояние режима
+        /// <summary>
+        /// Передает состояние режима
+        /// </summary>
+        /// <param name="e"></param>
+        public delegate void Destroy();
+        public static event Destroy DestroyEvent;
+
+        public static void OnDestroyEvent()
+        {
+            DestroyEvent?.Invoke();
         }
 
         #endregion
