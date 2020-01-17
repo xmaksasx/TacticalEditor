@@ -20,7 +20,7 @@ namespace TacticalEditor.Helpers
         private Line _lastLine;
         private AirportPoint _currentAirport;
         private RoutePoints _routePoints;
-        private List<AirPoint> _airPoints;
+        private AirPoint[]  _airPoints;
 
 
         public VisualObjectHelper(Canvas plotter)
@@ -29,7 +29,7 @@ namespace TacticalEditor.Helpers
             _plotter.SizeChanged += PlotterOnSizeChanged;
             _coordinateHelper = new CoordinateHelper();
             _routePoints = new RoutePoints();
-            _airPoints = new List<AirPoint>();
+            _airPoints = new AirPoint[20];
             EventsHelper.AddLineToRouteEvent += AddLineToRouteEvent;
             EventsHelper.ChangeAirportEvent += ChangeAirportEvent;
             LoadAirports();
@@ -37,9 +37,15 @@ namespace TacticalEditor.Helpers
 
         public void AddVisualPpm(Point point)
         {
+            if (_countNavigationPoint >= 19)
+            {
+                MessageBox.Show("Маршрут более чем из 20 точек слишком токсичен для летчика!!!");
+                return;
+            }
+
             _countNavigationPoint++;
             var ppmPoint = PreparePpmPoint(point);
-            _airPoints.Add(ppmPoint.AirPoint);
+            _airPoints[_countNavigationPoint] = ppmPoint.AirPoint;
             EventsHelper.OnPpmCollectionEvent(_airPoints);
             AddVisualToPlotter(new VisualPpm(ppmPoint), point);
         }
@@ -48,9 +54,7 @@ namespace TacticalEditor.Helpers
         private PpmPoint PreparePpmPoint(Point point)
         {
             var sizeMap = (uint)_plotter.Height;
-      
             PpmPoint ppmPoint = new PpmPoint();
-
             ppmPoint.NumberInRoute = _countNavigationPoint;
             ppmPoint.Screen.RelativeX = point.X / sizeMap;
             ppmPoint.Screen.RelativeY = point.Y / sizeMap;
@@ -71,17 +75,18 @@ namespace TacticalEditor.Helpers
             return airPoint;
         }
 
-            public void Clear()
+        public void Clear()
         {
-            for(int i = _plotter.Children.Count - 1; i >= 0; i--)
+            for (int i = _plotter.Children.Count - 1; i >= 0; i--)
             {
-                if(_plotter.Children[i] is VisualAirport) continue;
+                if (_plotter.Children[i] is VisualAirport) continue;
                 _plotter.Children.Remove(_plotter.Children[i]);
             }
+
             ChangeAirportEvent(_currentAirport);
             _countNavigationPoint = 1;
             _routePoints.PPM.Clear();
-            _airPoints.Clear();
+            Array.Clear(_airPoints, 0, _airPoints.Length);
         }
 
         public void SaveRoute(string path)

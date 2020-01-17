@@ -38,7 +38,7 @@ namespace TacticalEditor.Models
         public double Course { get; set; }
 
         /// <summary>
-        /// угол курса относительно ЛА
+        /// дистанция относительно ЛА
         /// </summary>
         public double Distance { get; set; }
     }

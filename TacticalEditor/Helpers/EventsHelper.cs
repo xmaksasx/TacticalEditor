@@ -65,9 +65,9 @@ namespace TacticalEditor.Helpers
         /// Передает коллекцию ППМ'ов
         /// </summary>
         /// <param name="e"></param>
-        public delegate void PpmCollection(List<AirPoint> airPoints);
+        public delegate void PpmCollection(AirPoint[] airPoints);
         public static event PpmCollection PpmCollectionEvent;
-        public static void OnPpmCollectionEvent(List<AirPoint> airPoints) =>
+        public static void OnPpmCollectionEvent(AirPoint[] airPoints) =>
             PpmCollectionEvent?.Invoke(airPoints);
 
         #endregion

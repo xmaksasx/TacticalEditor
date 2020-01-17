@@ -12,19 +12,18 @@ namespace TacticalEditor.Models
     class Route
     {
         public double CountAirPoints;
-        public List<AirPoint> AirPoints = new List<AirPoint>();
+        public AirPoint[] AirPoints = new AirPoint[20];
 
         public Route()
         {
             EventsHelper.PpmCollectionEvent += PpmCollection;
         }
 
-        private void PpmCollection(List<AirPoint> airPoint)
+        private void PpmCollection(AirPoint[] airPoint)
         {
             CountAirPoints++;
             AirPoints = airPoint;
         }
-
 
         public byte[] GetByte()
         {
