@@ -5,7 +5,7 @@ namespace TacticalEditor.Models
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct GeodesicCoordinate
+    public struct GeoCoordinate
     {
         /// <summary>
         /// широта [град]

@@ -25,9 +25,9 @@ namespace TacticalEditor
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _mapHelper = new MapHelper(Grd, ScrollViewer, 5);
+            _processingLoop = new ProcessingLoop();
             _visualObjectHelper = new VisualObjectHelper(PlotterVisualObject);
             _coordinateHelper = new CoordinateHelper();
-            _processingLoop = new ProcessingLoop();
             ScrollViewer.ScrollToVerticalOffset(2300);
             ScrollViewer.ScrollToHorizontalOffset(4130);
         }

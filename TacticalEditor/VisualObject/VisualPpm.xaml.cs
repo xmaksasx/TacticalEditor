@@ -79,8 +79,8 @@ namespace TacticalEditor.VisualObject
             if (!_isDragging) return;
             var point = e.GetPosition(Parent as UIElement);
             _coordinateHelper.PixelToLatLon(point, _ppmPoint.Screen.SizeMap, out var lat, out var lon);
-            _ppmPoint.AirPoint.GeodesicCoordinate.Lat = lat;
-            _ppmPoint.AirPoint.GeodesicCoordinate.Lon = lon;
+            _ppmPoint.InfoPoint.GeoCoordinate.Lat = lat;
+            _ppmPoint.InfoPoint.GeoCoordinate.Lon = lon;
             _ppmPoint.Screen.RelativeX = point.X / _ppmPoint.Screen.SizeMap;
             _ppmPoint.Screen.RelativeY = point.Y / _ppmPoint.Screen.SizeMap;
 

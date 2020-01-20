@@ -51,7 +51,7 @@ namespace TacticalEditor.VisualObject
 
         private void ChangeOfSize(uint sizeMap)
         {
-            _coordinateHelper.LatLonToPixel(_airportPoint.AirPoint.GeodesicCoordinate.Lat, _airportPoint.AirPoint.GeodesicCoordinate.Lon, sizeMap, out var px, out var py);
+            _coordinateHelper.LatLonToPixel(_airportPoint.InfoPoint.GeoCoordinate.Lat, _airportPoint.InfoPoint.GeoCoordinate.Lon, sizeMap, out var px, out var py);
             _airportPoint.Screen.RouteLineOut.X1 = px;
             _airportPoint.Screen.RouteLineOut.Y1 = py;
             Canvas.SetLeft(this, px);

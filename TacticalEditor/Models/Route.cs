@@ -8,32 +8,32 @@ namespace TacticalEditor.Models
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     class Route: Header
     {
-        public long CountPoints;
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        public AirPoint[] AirPoints = new AirPoint[20];
+        public InfoPoint[] Points = new InfoPoint[20];
+        public long CountPoints;
 
         public Route()
         {
             EventsHelper.PpmCollectionEvent += PpmCollection;
         }
       
-        private void PpmCollection(AirPoint[] airPoint)
+        private void PpmCollection(InfoPoint[] airPoint)
         {
-            AirPoints = airPoint;
+            Points = airPoint;
             CountPoints = airPoint.Length;
         }
 
         public byte[] GetByte()
         {
             List<byte> result = new List<byte>();
-
             result.AddRange(Head);
-            result.AddRange(BitConverter.GetBytes(CountPoints));
-            for (int i = 0; i < AirPoints.Length; i++)
-                if (AirPoints[i] == null)
-                    result.AddRange(ObjectToByte(new AirPoint() {Type = -1}));
+            for (int i = 0; i < Points.Length; i++)
+                if (Points[i] == null)
+                    result.AddRange(ObjectToByte(new InfoPoint() {Type = -1}));
                 else
-                    result.AddRange(ObjectToByte(AirPoints[i]));
+                    result.AddRange(ObjectToByte(Points[i]));
+            result.AddRange(BitConverter.GetBytes(CountPoints));
             return result.ToArray();
         }
 

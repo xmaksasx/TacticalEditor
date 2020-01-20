@@ -17,14 +17,14 @@
         /// </summary>
         public int NumberInRoute { get; set; }
 
-        public AirPoint AirPoint;
+        public InfoPoint InfoPoint;
 
         public ScreenCoordinate Screen { get; set; }
 
         public AirportPoint()
         {
             Screen = new ScreenCoordinate();
-            AirPoint = new AirPoint();
+            InfoPoint = new InfoPoint();
         }
     }
 }

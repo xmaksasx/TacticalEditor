@@ -8,7 +8,7 @@
         /// </summary>
         public int NumberInRoute { get; set; }
         public ScreenCoordinate Screen { get; set; }
-        public AirPoint AirPoint; 
+        public InfoPoint InfoPoint; 
         public PpmPoint()
         {
             Screen = new ScreenCoordinate();

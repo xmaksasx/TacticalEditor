@@ -3,13 +3,13 @@
 namespace TacticalEditor.Models
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public class AirPoint 
+    public class InfoPoint 
     {
         /// <summary>
         /// Тип точки маршрута
         /// </summary>
         public long Type;
 
-        public GeodesicCoordinate GeodesicCoordinate;
+        public GeoCoordinate GeoCoordinate;
     }
 }
