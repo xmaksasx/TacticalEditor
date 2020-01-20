@@ -5,7 +5,7 @@ namespace TacticalEditor.Models
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public class GeodesicCoordinate
+    public struct GeodesicCoordinate
     {
         /// <summary>
         /// широта [град]
@@ -33,9 +33,14 @@ namespace TacticalEditor.Models
         public double H { get; set; }
 
         /// <summary>
-        /// угол курса относительно ЛА
+        /// курс заданный на НТ
         /// </summary>
-        public double Course { get; set; }
+        public double Psi { get; set; }
+
+        /// <summary>
+        /// заданный путевой угол на НТ
+        /// </summary>
+        public double PsiPath { get; set; }
 
         /// <summary>
         /// дистанция относительно ЛА

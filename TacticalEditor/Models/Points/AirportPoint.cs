@@ -1,6 +1,6 @@
 ﻿namespace TacticalEditor.Models.Points
 {
-    public class AirportPoint : AirPoint
+    public class AirportPoint
     {
         /// <summary>
         /// Курс взлетной полосы
@@ -17,11 +17,14 @@
         /// </summary>
         public int NumberInRoute { get; set; }
 
+        public AirPoint AirPoint;
+
         public ScreenCoordinate Screen { get; set; }
 
         public AirportPoint()
         {
             Screen = new ScreenCoordinate();
+            AirPoint = new AirPoint();
         }
     }
 }

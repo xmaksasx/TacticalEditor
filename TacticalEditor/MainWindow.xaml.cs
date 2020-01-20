@@ -20,7 +20,6 @@ namespace TacticalEditor
         public MainWindow()
         {
             InitializeComponent();
-            upcast();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -113,51 +112,6 @@ namespace TacticalEditor
             _processingLoop.Destroy();
             Application.Current.Shutdown();
         }
-
-
-
-
-
-
-
-        class Base
-        {
-            public string str;
-        }
-
-        class NotBase : Base
-        {
-            public int i;
-            public int j;
-        }
-
-        private void upcast()
-        {
-            Base b = new Base();
-            NotBase notBase = new NotBase();
-            Base _base = (Base)notBase;
-          
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
     enum MenuStates
@@ -166,9 +120,5 @@ namespace TacticalEditor
         Measure,
         Edit
     }
-
-
-
-
 
 }

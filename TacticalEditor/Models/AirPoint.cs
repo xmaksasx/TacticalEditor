@@ -1,16 +1,15 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using TacticalEditor.Models.Points;
+﻿using System.Runtime.InteropServices;
 
 namespace TacticalEditor.Models
 {
-    [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public class AirPoint: GeodesicCoordinate
+    public class AirPoint 
     {
         /// <summary>
         /// Тип точки маршрута
         /// </summary>
         public long Type;
+
+        public GeodesicCoordinate GeodesicCoordinate;
     }
 }

@@ -81,6 +81,7 @@
     <Compile Include="Helpers\UdpHelper.cs" />
     <Compile Include="Helpers\VisualObjectHelper.cs" />
     <Compile Include="Models\AirPoint.cs" />
+    <Compile Include="Models\Header.cs" />
     <Compile Include="Models\ModelXml\Airport.cs" />
     <Compile Include="Models\Points\AirportPoint.cs" />
     <Compile Include="Models\GeodesicCoordinate.cs" />

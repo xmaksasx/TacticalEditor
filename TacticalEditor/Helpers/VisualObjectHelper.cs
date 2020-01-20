@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
@@ -20,7 +18,7 @@ namespace TacticalEditor.Helpers
         private Line _lastLine;
         private AirportPoint _currentAirport;
         private RoutePoints _routePoints;
-        private AirPoint[]  _airPoints;
+        private AirPoint[] _airPoints;
 
 
         public VisualObjectHelper(Canvas plotter)
@@ -42,14 +40,13 @@ namespace TacticalEditor.Helpers
                 MessageBox.Show("Маршрут более чем из 20 точек слишком токсичен для летчика!!!");
                 return;
             }
-
             _countNavigationPoint++;
             var ppmPoint = PreparePpmPoint(point);
             _airPoints[_countNavigationPoint] = ppmPoint.AirPoint;
             EventsHelper.OnPpmCollectionEvent(_airPoints);
             AddVisualToPlotter(new VisualPpm(ppmPoint), point);
+    
         }
-
 
         private PpmPoint PreparePpmPoint(Point point)
         {
@@ -70,8 +67,8 @@ namespace TacticalEditor.Helpers
             var sizeMap = (uint)_plotter.Height;
             AirPoint airPoint = new AirPoint();
             _coordinateHelper.PixelToLatLon(point, sizeMap, out var lat, out var lon);
-            airPoint.Lat = lat;
-            airPoint.Lon = lon;
+            airPoint.GeodesicCoordinate.Lat = lat;
+            airPoint.GeodesicCoordinate.Lon = lon;
             return airPoint;
         }
 
@@ -84,9 +81,11 @@ namespace TacticalEditor.Helpers
             }
 
             ChangeAirportEvent(_currentAirport);
-            _countNavigationPoint = 1;
+            _countNavigationPoint = 0;
             _routePoints.PPM.Clear();
-            Array.Clear(_airPoints, 0, _airPoints.Length);
+        //    for (int i = 1; i < _airPoints.Length; i++)
+               // _airPoints[i] = ;
+
         }
 
         public void SaveRoute(string path)
@@ -129,6 +128,7 @@ namespace TacticalEditor.Helpers
         {
             _lastLine = airportPoint.Screen.RouteLineOut;
             _currentAirport = airportPoint;
+            _airPoints[0] = airportPoint.AirPoint;
         }
 
         private void PlotterOnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -139,7 +139,6 @@ namespace TacticalEditor.Helpers
 
         private void LoadAirports()
         {
-
             string[] fileEntries = Directory.GetFiles("Airports");
             foreach (string fileName in fileEntries)
             {
@@ -153,18 +152,29 @@ namespace TacticalEditor.Helpers
 
         private void AddVisualAirport(Airport airport)
         {
+            var airportPoint = PreparePpmPoint(airport);
+            AddVisualToPlotter(new VisualAirport(airportPoint), new Point(airportPoint.Screen.RelativeX, airportPoint.Screen.RelativeY));
+        }
+
+        private AirportPoint PreparePpmPoint(Airport airport)
+        {
             var sizeMap = (uint)_plotter.Height;
             _coordinateHelper.LatLonToPixel(airport.Local.latitude, airport.Local.longitude, sizeMap, out var px, out var py);
             AirportPoint airportPoint = new AirportPoint();
-            if(airport.Local.name == "Lipetsk")
-                airportPoint.ActiveAirport = true;
-            airportPoint.Lat = airport.Runway.latitude;
-            airportPoint.Lon = airport.Runway.longitude;
+            airportPoint.AirPoint.GeodesicCoordinate.H = airport.Local.altitude;
             airportPoint.HeadingRunway = airport.Runway.heading;
             airportPoint.Screen.SizeMap = sizeMap;
             airportPoint.Screen.RelativeX = px;
             airportPoint.Screen.RelativeY = py;
-            AddVisualToPlotter(new VisualAirport(airportPoint), new Point(px, py));
+            airportPoint.AirPoint.GeodesicCoordinate.Lat = airport.Runway.latitude;
+            airportPoint.AirPoint.GeodesicCoordinate.Lon = airport.Runway.longitude;
+            airportPoint.AirPoint.Type = 1;
+            if(airport.Local.name == "Lipetsk")
+            {
+                airportPoint.ActiveAirport = true;
+                _airPoints[0] = airportPoint.AirPoint;
+            }
+            return airportPoint;
         }
     }
 }
