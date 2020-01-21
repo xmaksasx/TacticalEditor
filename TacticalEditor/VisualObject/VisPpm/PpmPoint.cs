@@ -1,4 +1,7 @@
-﻿namespace TacticalEditor.Models.Points
+﻿using TacticalEditor.Models;
+using TacticalEditor.Models.NavPoint;
+
+namespace TacticalEditor.VisualObject.VisPpm
 {
 
     public class PpmPoint
@@ -8,7 +11,7 @@
         /// </summary>
         public int NumberInRoute { get; set; }
         public ScreenCoordinate Screen { get; set; }
-        public InfoPoint InfoPoint; 
+        public NavigationPoint NavigationPoint;
         public PpmPoint()
         {
             Screen = new ScreenCoordinate();

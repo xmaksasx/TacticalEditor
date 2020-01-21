@@ -5,8 +5,10 @@ using System.Windows.Shapes;
 using System.Xml.Serialization;
 using TacticalEditor.Models;
 using TacticalEditor.Models.ModelXml;
-using TacticalEditor.Models.Points;
+using TacticalEditor.Models.NavPoint;
 using TacticalEditor.VisualObject;
+using TacticalEditor.VisualObject.VisAirport;
+using TacticalEditor.VisualObject.VisPpm;
 
 namespace TacticalEditor.Helpers
 {
@@ -18,7 +20,7 @@ namespace TacticalEditor.Helpers
         private Line _lastLine;
         private AirportPoint _currentAirport;
         private RoutePoints _routePoints;
-        private InfoPoint[] _airPoints;
+        private NavigationPoint[] _airPoints;
 
 
         public VisualObjectHelper(Canvas plotter)
@@ -27,7 +29,7 @@ namespace TacticalEditor.Helpers
             _plotter.SizeChanged += PlotterOnSizeChanged;
             _coordinateHelper = new CoordinateHelper();
             _routePoints = new RoutePoints();
-            _airPoints = new InfoPoint[20];
+            _airPoints = new NavigationPoint[20];
             EventsHelper.AddLineToRouteEvent += AddLineToRouteEvent;
             EventsHelper.ChangeAirportEvent += ChangeAirportEvent;
             LoadAirports();
@@ -42,7 +44,7 @@ namespace TacticalEditor.Helpers
             }
             _countNavigationPoint++;
             var ppmPoint = PreparePpmPoint(point);
-            _airPoints[_countNavigationPoint] = ppmPoint.InfoPoint;
+            _airPoints[_countNavigationPoint] = ppmPoint.NavigationPoint;
             EventsHelper.OnPpmCollectionEvent(_airPoints);
             AddVisualToPlotter(new VisualPpm(ppmPoint), point);
     
@@ -56,16 +58,16 @@ namespace TacticalEditor.Helpers
             ppmPoint.Screen.RelativeX = point.X / sizeMap;
             ppmPoint.Screen.RelativeY = point.Y / sizeMap;
             ppmPoint.Screen.SizeMap = sizeMap;
-            ppmPoint.InfoPoint = PrepareAirPoint(point);
+            ppmPoint.NavigationPoint = PrepareAirPoint(point);
             ppmPoint.Screen.RouteLineIn = _lastLine;
             _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
             return ppmPoint;
         }
 
-        private InfoPoint PrepareAirPoint(Point point)
+        private NavigationPoint PrepareAirPoint(Point point)
         {
             var sizeMap = (uint)_plotter.Height;
-            InfoPoint airPoint = new InfoPoint();
+            NavigationPoint airPoint = new NavigationPoint();
             _coordinateHelper.PixelToLatLon(point, sizeMap, out var lat, out var lon);
             airPoint.GeoCoordinate.Lat = lat;
             airPoint.GeoCoordinate.Lon = lon;
@@ -127,7 +129,7 @@ namespace TacticalEditor.Helpers
         {
             _lastLine = airportPoint.Screen.RouteLineOut;
             _currentAirport = airportPoint;
-            _airPoints[0] = airportPoint.InfoPoint;
+            _airPoints[0] = airportPoint.NavigationPoint;
         }
 
         private void PlotterOnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -160,18 +162,19 @@ namespace TacticalEditor.Helpers
             var sizeMap = (uint)_plotter.Height;
             _coordinateHelper.LatLonToPixel(airport.Local.latitude, airport.Local.longitude, sizeMap, out var px, out var py);
             AirportPoint airportPoint = new AirportPoint();
-            airportPoint.InfoPoint.GeoCoordinate.H = airport.Local.altitude;
+            airportPoint.NavigationPoint.GeoCoordinate.H = airport.Local.altitude;
             airportPoint.HeadingRunway = airport.Runway.heading;
             airportPoint.Screen.SizeMap = sizeMap;
             airportPoint.Screen.RelativeX = px;
             airportPoint.Screen.RelativeY = py;
-            airportPoint.InfoPoint.GeoCoordinate.Lat = airport.Runway.latitude;
-            airportPoint.InfoPoint.GeoCoordinate.Lon = airport.Runway.longitude;
-            airportPoint.InfoPoint.Type = 1;
+            airportPoint.NavigationPoint.GeoCoordinate.Lat = airport.Runway.latitude;
+            airportPoint.NavigationPoint.GeoCoordinate.Lon = airport.Runway.longitude;
+            airportPoint.NavigationPoint.Measure.Psi = airport.Runway.heading;
+            airportPoint.NavigationPoint.TypePpm = 1;
             if(airport.Local.name == "Lipetsk")
             {
                 airportPoint.ActiveAirport = true;
-                _airPoints[0] = airportPoint.InfoPoint;
+                _airPoints[0] = airportPoint.NavigationPoint;
                 EventsHelper.OnPpmCollectionEvent(_airPoints);
             }
             return airportPoint;

@@ -3,10 +3,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using TacticalEditor.Helpers;
-using TacticalEditor.Models;
-using TacticalEditor.Models.Points;
 
-namespace TacticalEditor.VisualObject
+namespace TacticalEditor.VisualObject.VisAirport
 {
     /// <summary>
     /// Interaction logic for Airport.xaml
@@ -51,7 +49,7 @@ namespace TacticalEditor.VisualObject
 
         private void ChangeOfSize(uint sizeMap)
         {
-            _coordinateHelper.LatLonToPixel(_airportPoint.InfoPoint.GeoCoordinate.Lat, _airportPoint.InfoPoint.GeoCoordinate.Lon, sizeMap, out var px, out var py);
+            _coordinateHelper.LatLonToPixel(_airportPoint.NavigationPoint.GeoCoordinate.Lat, _airportPoint.NavigationPoint.GeoCoordinate.Lon, sizeMap, out var px, out var py);
             _airportPoint.Screen.RouteLineOut.X1 = px;
             _airportPoint.Screen.RouteLineOut.Y1 = py;
             Canvas.SetLeft(this, px);

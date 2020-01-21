@@ -1,4 +1,7 @@
-﻿namespace TacticalEditor.Models.Points
+﻿using TacticalEditor.Models;
+using TacticalEditor.Models.NavPoint;
+
+namespace TacticalEditor.VisualObject.VisAirport
 {
     public class AirportPoint
     {
@@ -17,14 +20,14 @@
         /// </summary>
         public int NumberInRoute { get; set; }
 
-        public InfoPoint InfoPoint;
+        public NavigationPoint NavigationPoint;
 
         public ScreenCoordinate Screen { get; set; }
 
         public AirportPoint()
         {
             Screen = new ScreenCoordinate();
-            InfoPoint = new InfoPoint();
+            NavigationPoint = new NavigationPoint();
         }
     }
 }

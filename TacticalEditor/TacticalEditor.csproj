@@ -80,19 +80,20 @@
     <Compile Include="Helpers\ProcessingLoop.cs" />
     <Compile Include="Helpers\UdpHelper.cs" />
     <Compile Include="Helpers\VisualObjectHelper.cs" />
-    <Compile Include="Models\InfoPoint.cs" />
+    <Compile Include="Models\NavPoint\NavigationPoint.cs" />
+    <Compile Include="Models\NavPoint\Measure.cs" />
     <Compile Include="Models\Header.cs" />
     <Compile Include="Models\ModelXml\Airport.cs" />
-    <Compile Include="Models\Points\AirportPoint.cs" />
-    <Compile Include="Models\GeoCoordinate.cs" />
-    <Compile Include="Models\Points\PpmPoint.cs" />
+    <Compile Include="VisualObject\VisAirport\AirportPoint.cs" />
+    <Compile Include="Models\NavPoint\GeoCoordinate.cs" />
+    <Compile Include="VisualObject\VisPpm\PpmPoint.cs" />
     <Compile Include="Models\ModelXml\RoutePoints.cs" />
     <Compile Include="Models\Route.cs" />
     <Compile Include="Models\ScreenCoordinate.cs" />
-    <Compile Include="VisualObject\VisualAirport.xaml.cs">
+    <Compile Include="VisualObject\VisAirport\VisualAirport.xaml.cs">
       <DependentUpon>VisualAirport.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VisualObject\VisualPpm.xaml.cs">
+    <Compile Include="VisualObject\VisPpm\VisualPpm.xaml.cs">
       <DependentUpon>VisualPpm.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
@@ -109,11 +110,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="VisualObject\VisualAirport.xaml">
+    <Page Include="VisualObject\VisAirport\VisualAirport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VisualObject\VisualPpm.xaml">
+    <Page Include="VisualObject\VisPpm\VisualPpm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TacticalEditor.Helpers;
+using TacticalEditor.Models.NavPoint;
 
 namespace TacticalEditor.Models
 {
@@ -10,7 +11,7 @@ namespace TacticalEditor.Models
     {
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        public InfoPoint[] Points = new InfoPoint[20];
+        public NavigationPoint[] Points = new NavigationPoint[20];
         public long CountPoints;
 
         public Route()
@@ -18,7 +19,7 @@ namespace TacticalEditor.Models
             EventsHelper.PpmCollectionEvent += PpmCollection;
         }
       
-        private void PpmCollection(InfoPoint[] airPoint)
+        private void PpmCollection(NavigationPoint[] airPoint)
         {
             Points = airPoint;
             CountPoints = airPoint.Length;
@@ -30,9 +31,13 @@ namespace TacticalEditor.Models
             result.AddRange(Head);
             for (int i = 0; i < Points.Length; i++)
                 if (Points[i] == null)
-                    result.AddRange(ObjectToByte(new InfoPoint() {Type = -1}));
+                    result.AddRange(ObjectToByte(new NavigationPoint(){TypePpm = -1}));
                 else
+                {
                     result.AddRange(ObjectToByte(Points[i]));
+                    CountPoints++;
+                }
+
             result.AddRange(BitConverter.GetBytes(CountPoints));
             return result.ToArray();
         }

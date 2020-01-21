@@ -1,9 +1,7 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace TacticalEditor.Models
+namespace TacticalEditor.Models.NavPoint
 {
-    [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct GeoCoordinate
     {
@@ -31,20 +29,5 @@ namespace TacticalEditor.Models
         /// высота навигационной точки над уровнем моря [м]
         /// </summary>
         public double H { get; set; }
-
-        /// <summary>
-        /// курс заданный на НТ
-        /// </summary>
-        public double Psi { get; set; }
-
-        /// <summary>
-        /// заданный путевой угол на НТ
-        /// </summary>
-        public double PsiPath { get; set; }
-
-        /// <summary>
-        /// дистанция относительно ЛА
-        /// </summary>
-        public double Distance { get; set; }
     }
 }

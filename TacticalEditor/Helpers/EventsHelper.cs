@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Windows.Shapes;
-using TacticalEditor.Models;
-using TacticalEditor.Models.Points;
+﻿using System.Windows.Shapes;
+using TacticalEditor.Models.NavPoint;
+using TacticalEditor.VisualObject.VisAirport;
 
 namespace TacticalEditor.Helpers
 {
@@ -65,9 +64,9 @@ namespace TacticalEditor.Helpers
         /// Передает коллекцию ППМ'ов
         /// </summary>
         /// <param name="e"></param>
-        public delegate void PpmCollection(InfoPoint[] airPoints);
+        public delegate void PpmCollection(NavigationPoint[] airPoints);
         public static event PpmCollection PpmCollectionEvent;
-        public static void OnPpmCollectionEvent(InfoPoint[] airPoints) =>
+        public static void OnPpmCollectionEvent(NavigationPoint[] airPoints) =>
             PpmCollectionEvent?.Invoke(airPoints);
 
         #endregion
