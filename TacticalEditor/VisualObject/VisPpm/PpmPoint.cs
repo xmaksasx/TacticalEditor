@@ -11,12 +11,20 @@ namespace TacticalEditor.VisualObject.VisPpm
         /// </summary>
         public int NumberInRoute { get; set; }
 
-        public ScreenCoordinate Screen { get; set; }
-
+        /// <summary>
+        /// Геодезические координаты
+        /// </summary>
         public NavigationPoint NavigationPoint;
+
+        /// <summary>
+        /// Экранные координаты
+        /// </summary>
+        public ScreenCoordinate Screen;
         public PpmPoint()
         {
             Screen = new ScreenCoordinate();
+            NavigationPoint = new NavigationPoint();
+
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Windows.Shapes;
 using System.Xml.Serialization;
 using TacticalEditor.Models.ModelXml;
 using TacticalEditor.Models.NavPoint;
-using TacticalEditor.VisualObject;
 using TacticalEditor.VisualObject.VisAircraft;
 using TacticalEditor.VisualObject.VisAirCraft;
 using TacticalEditor.VisualObject.VisAirport;

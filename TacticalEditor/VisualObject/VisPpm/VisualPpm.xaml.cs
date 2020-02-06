@@ -1,14 +1,11 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using TacticalEditor.Helpers;
-using TacticalEditor.VisualObject.VisPpm;
 
-
-namespace TacticalEditor.VisualObject
+namespace TacticalEditor.VisualObject.VisPpm
 {
     /// <summary>
     /// Interaction logic for VisualNavigationPoint.xaml

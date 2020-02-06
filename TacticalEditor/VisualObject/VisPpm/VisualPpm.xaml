@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="TacticalEditor.VisualObject.VisualPpm"
+    x:Class="TacticalEditor.VisualObject.VisPpm.VisualPpm"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Width="30"

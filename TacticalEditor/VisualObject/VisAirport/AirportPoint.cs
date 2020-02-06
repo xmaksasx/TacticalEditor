@@ -5,11 +5,17 @@ namespace TacticalEditor.VisualObject.VisAirport
 {
     public class AirportPoint
     {
-        public NavigationPoint NavigationPoint;
-
-        public ScreenCoordinate Screen { get; set; }
-
         public AirportInfo AirportInfo;
+
+        /// <summary>
+        /// Геодезические координаты
+        /// </summary>
+        public NavigationPoint NavigationPoint;
+        
+        /// <summary>
+        /// Экранные координаты
+        /// </summary>
+        public ScreenCoordinate Screen;
 
         public AirportPoint()
         {

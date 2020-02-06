@@ -5,9 +5,15 @@ namespace TacticalEditor.VisualObject.VisAircraft
 {
     public class AircraftPoint
     {
+        /// <summary>
+        /// Геодезические координаты
+        /// </summary>
         public NavigationPoint NavigationPoint;
 
-        public ScreenCoordinate Screen { get; set; }
+        /// <summary>
+        /// Экранные координаты
+        /// </summary>
+        public ScreenCoordinate Screen;
 
         public AircraftPoint()
         {
