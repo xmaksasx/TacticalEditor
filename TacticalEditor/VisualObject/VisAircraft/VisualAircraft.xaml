@@ -1,0 +1,38 @@
+﻿<UserControl
+    x:Class="TacticalEditor.VisualObject.VisAirCraft.VisualAircraft"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:h="http://helix-toolkit.org/wpf"
+    xmlns:local="clr-namespace:TacticalEditor.VisualObject.VisAirCraft"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="30"
+    Height="30"
+    Margin="-15,-15,0,0"
+    mc:Ignorable="d">
+    <Grid>
+        <h:HelixViewport3D x:Name="myView" ShowViewCube="False" IsZoomEnabled="False" IsRotationEnabled="False">
+            <ModelVisual3D x:Name="model">
+                <ModelVisual3D.Transform>
+                    <Transform3DGroup>
+                        <RotateTransform3D>
+                            <RotateTransform3D.Rotation>
+                                <AxisAngleRotation3D x:Name="xxx" Angle="0" Axis="1,0,0" />
+                            </RotateTransform3D.Rotation>
+                        </RotateTransform3D>
+                        <RotateTransform3D>
+                            <RotateTransform3D.Rotation>
+                                <AxisAngleRotation3D x:Name="yyy" Angle="0" Axis="0,1,0" />
+                            </RotateTransform3D.Rotation>
+                        </RotateTransform3D>
+                        <RotateTransform3D>
+                            <RotateTransform3D.Rotation>
+                                <AxisAngleRotation3D x:Name="zzz" Angle="0" Axis="0,0,1" />
+                            </RotateTransform3D.Rotation>
+                        </RotateTransform3D>
+                    </Transform3DGroup>
+                </ModelVisual3D.Transform>
+            </ModelVisual3D>
+        </h:HelixViewport3D>
+    </Grid>
+</UserControl>

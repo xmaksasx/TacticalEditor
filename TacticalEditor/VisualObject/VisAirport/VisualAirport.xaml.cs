@@ -35,21 +35,21 @@ namespace TacticalEditor.VisualObject.VisAirport
    
         private void PrepareAirport(AirportPoint airportPoint)
         {
-           Heading.Angle = _airportPoint.HeadingRunway;
-           if (_airportPoint.ActiveAirport)
+           Heading.Angle = _airportPoint.AirportInfo.Runway.Heading;
+           if (_airportPoint.AirportInfo.ActiveAirport)
                VisualAirport_OnPreviewMouseDoubleClick(null, null);
         }
 
         private void ChangeAirportEvent(AirportPoint e)
         {
-            _airportPoint.ActiveAirport = false;
+            _airportPoint.AirportInfo.ActiveAirport = false;
             El.Stroke = new SolidColorBrush(Colors.Black);
             El.StrokeThickness = 0.6;
         }
 
         private void ChangeOfSize(uint sizeMap)
         {
-            _coordinateHelper.LatLonToPixel(_airportPoint.NavigationPoint.GeoCoordinate.Lat, _airportPoint.NavigationPoint.GeoCoordinate.Lon, sizeMap, out var px, out var py);
+            _coordinateHelper.LatLonToPixel(_airportPoint.NavigationPoint.GeoCoordinate.Latitude, _airportPoint.NavigationPoint.GeoCoordinate.Longitude, sizeMap, out var px, out var py);
             _airportPoint.Screen.RouteLineOut.X1 = px;
             _airportPoint.Screen.RouteLineOut.Y1 = py;
             Canvas.SetLeft(this, px);
@@ -59,7 +59,7 @@ namespace TacticalEditor.VisualObject.VisAirport
         private void VisualAirport_OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             EventsHelper.OnChangeAirportEvent(_airportPoint);
-            _airportPoint.ActiveAirport = true;
+            _airportPoint.AirportInfo.ActiveAirport = true;
             El.Stroke = new SolidColorBrush(Colors.LimeGreen);
             El.StrokeThickness = 1.5;
         }

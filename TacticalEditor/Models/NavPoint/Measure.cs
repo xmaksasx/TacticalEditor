@@ -16,6 +16,11 @@ namespace TacticalEditor.Models.NavPoint
         public double PsiPath { get; set; }
 
         /// <summary>
+        /// радиус прохода ППМ
+        /// </summary>
+        public double RDetect { get; set; }
+
+        /// <summary>
         /// дистанция относительно ЛА
         /// </summary>
         public double Distance { get; set; }

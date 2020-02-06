@@ -44,6 +44,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\Elevation.dll</HintPath>
     </Reference>
+    <Reference Include="HelixToolkit, Version=2.10.0.0, Culture=neutral, PublicKeyToken=52aa3500039caf0d, processorArchitecture=MSIL">
+      <HintPath>..\packages\HelixToolkit.2.10.0\lib\netstandard1.1\HelixToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="HelixToolkit.Wpf, Version=2.10.0.0, Culture=neutral, PublicKeyToken=52aa3500039caf0d, processorArchitecture=MSIL">
+      <HintPath>..\packages\HelixToolkit.Wpf.2.10.0\lib\net45\HelixToolkit.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="MapWorld">
       <HintPath>..\..\ControlMap\ControlMap\bin\Debug\MapWorld.dll</HintPath>
     </Reference>
@@ -80,10 +86,16 @@
     <Compile Include="Helpers\ProcessingLoop.cs" />
     <Compile Include="Helpers\UdpHelper.cs" />
     <Compile Include="Helpers\VisualObjectHelper.cs" />
+    <Compile Include="VisualObject\VisAirport\AirportInfo.cs" />
+    <Compile Include="VisualObject\VisAirport\RunwayInfo.cs" />
     <Compile Include="Models\NavPoint\NavigationPoint.cs" />
     <Compile Include="Models\NavPoint\Measure.cs" />
     <Compile Include="Models\Header.cs" />
     <Compile Include="Models\ModelXml\Airport.cs" />
+    <Compile Include="VisualObject\VisAircraft\AircraftPoint.cs" />
+    <Compile Include="VisualObject\VisAircraft\VisualAircraft.xaml.cs">
+      <DependentUpon>VisualAircraft.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VisualObject\VisAirport\AirportPoint.cs" />
     <Compile Include="Models\NavPoint\GeoCoordinate.cs" />
     <Compile Include="VisualObject\VisPpm\PpmPoint.cs" />
@@ -110,6 +122,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="VisualObject\VisAircraft\VisualAircraft.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="VisualObject\VisAirport\VisualAirport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

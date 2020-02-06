@@ -8,12 +8,12 @@ namespace TacticalEditor.Models.NavPoint
         /// <summary>
         /// широта [град]
         /// </summary>
-        public double Lat { get; set; }
+        public double Latitude { get; set; }
 
         /// <summary>
         /// долгота [град]
         /// </summary>
-        public double Lon { get; set; }
+        public double Longitude { get; set; }
 
         /// <summary>
         /// координата X от ЛА [км]

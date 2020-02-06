@@ -28,6 +28,7 @@ namespace TacticalEditor.Models
         public byte[] GetByte()
         {
             List<byte> result = new List<byte>();
+            CountPoints = 0;
             result.AddRange(Head);
             for (int i = 0; i < Points.Length; i++)
                 if (Points[i] == null)
@@ -37,7 +38,7 @@ namespace TacticalEditor.Models
                     result.AddRange(ObjectToByte(Points[i]));
                     CountPoints++;
                 }
-
+            
             result.AddRange(BitConverter.GetBytes(CountPoints));
             return result.ToArray();
         }

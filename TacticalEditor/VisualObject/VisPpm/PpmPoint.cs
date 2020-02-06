@@ -10,7 +10,9 @@ namespace TacticalEditor.VisualObject.VisPpm
         /// номер навигационной точки в маршруте (для ППМ)
         /// </summary>
         public int NumberInRoute { get; set; }
+
         public ScreenCoordinate Screen { get; set; }
+
         public NavigationPoint NavigationPoint;
         public PpmPoint()
         {

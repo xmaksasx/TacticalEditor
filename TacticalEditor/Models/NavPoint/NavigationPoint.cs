@@ -16,7 +16,19 @@ namespace TacticalEditor.Models.NavPoint
         public double Executable;
 
 
+        /// <summary>
+        /// признак прохода
+        /// </summary>
+        public double PrPro;
+
+        /// <summary>
+        /// Геодезические координаты
+        /// </summary>
         public GeoCoordinate GeoCoordinate;
+
+        /// <summary>
+        /// Рассчетные параметры 
+        /// </summary>
         public Measure Measure;
     }
 }
