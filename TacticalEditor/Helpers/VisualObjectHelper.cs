@@ -1,14 +1,14 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
-using TacticalEditor.Models.ModelXml;
-using TacticalEditor.Models.NavPoint;
+using TacticalEditor.ModelsXml;
 using TacticalEditor.VisualObject.VisAircraft;
 using TacticalEditor.VisualObject.VisAirCraft;
 using TacticalEditor.VisualObject.VisAirport;
-using TacticalEditor.VisualObject.VisPpm;
+using TacticalEditor.WorkingPoints;
 
 namespace TacticalEditor.Helpers
 {
@@ -16,173 +16,181 @@ namespace TacticalEditor.Helpers
     {
         private readonly Canvas _plotter;
         private readonly CoordinateHelper _coordinateHelper;
-        private int _countNavigationPoint;
-        private Line _lastLine;
-        private AirportPoint _currentAirport;
+        private PpmWorker _ppmWorker;
+        private AirBaseWorker _airBaseWorker;
         private RoutePoints _routePoints;
-        private NavigationPoint[] _airPoints;
+        private AirBasePoint _currentAirport;
+        private double _lX =0;
+        private double _lY = 0;
+
 
         public VisualObjectHelper(Canvas plotter)
         {
             _plotter = plotter;
             _plotter.SizeChanged += PlotterOnSizeChanged;
-            _coordinateHelper = new CoordinateHelper();
-            _routePoints = new RoutePoints();
-            _airPoints = new NavigationPoint[20];
-            EventsHelper.AddLineToRouteEvent += AddLineToRouteEvent;
+            EventsHelper.AddVisualLineEvent += AddVisualLine;
             EventsHelper.ChangeAirportEvent += ChangeAirportEvent;
-            LoadAirports();
+            _coordinateHelper = new CoordinateHelper();
+            _ppmWorker = new PpmWorker();
+            _airBaseWorker = new AirBaseWorker();
+            AddVisualAirBase();
+            AddVisualAircraft();
+
+            _routePoints = new RoutePoints();
         }
-
-        #region PPM
-
-        public void AddVisualPpm(Point point)
-        {
-            if(_countNavigationPoint >= 19)
-            {
-                MessageBox.Show("Маршрут более чем из 20 точек слишком токсичен для летчика!!!");
-                return;
-            }
-            _countNavigationPoint++;
-            var ppmPoint = PreparePpmPoint(point);
-            _airPoints[_countNavigationPoint] = ppmPoint.NavigationPoint;
-            EventsHelper.OnPpmCollectionEvent(_airPoints);
-            AddVisualToPlotter(new VisualPpm(ppmPoint), point);
-
-        }
-
-        private PpmPoint PreparePpmPoint(Point point)
-        {
-            var sizeMap = (uint)_plotter.Height;
-            PpmPoint ppmPoint = new PpmPoint();
-            ppmPoint.NumberInRoute = _countNavigationPoint;
-            ppmPoint.Screen.RelativeX = point.X / sizeMap;
-            ppmPoint.Screen.RelativeY = point.Y / sizeMap;
-            ppmPoint.Screen.SizeMap = sizeMap;
-            ppmPoint.NavigationPoint = PrepareAirPoint(point);
-            ppmPoint.Screen.RouteLineIn = _lastLine;
-            _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
-            return ppmPoint;
-        }
-
-        private NavigationPoint PrepareAirPoint(Point point)
-        {
-            var sizeMap = (uint)_plotter.Height;
-            NavigationPoint airPoint = new NavigationPoint();
-            _coordinateHelper.PixelToLatLon(point, sizeMap, out var lat, out var lon);
-            airPoint.GeoCoordinate.Latitude = lat;
-            airPoint.GeoCoordinate.Longitude = lon;
-            return airPoint;
-        }
-
-        #endregion
-
-        #region Airport
-
-        private void LoadAirports()
-        {
-            string[] fileEntries = Directory.GetFiles("Airports");
-            foreach(string fileName in fileEntries)
-            {
-                Airport air;
-                XmlSerializer serializer = new XmlSerializer(typeof(Airport));
-                using(FileStream fileStream = new FileStream(fileName, FileMode.Open))
-                    air = (Airport)serializer.Deserialize(fileStream);
-                AddVisualAirport(air);
-            }
-        }
-
-        private void AddVisualAirport(Airport airport)
-        {
-            var airportPoint = PreparePpmPoint(airport);
-            AddVisualToPlotter(new VisualAirport(airportPoint), new Point(airportPoint.Screen.RelativeX, airportPoint.Screen.RelativeY));
-        }
-
-        private AirportPoint PreparePpmPoint(Airport airport)
-        {
-            var sizeMap = (uint)_plotter.Height;
-            _coordinateHelper.LatLonToPixel(airport.Local.latitude, airport.Local.longitude, sizeMap, out var px, out var py);
-            AirportPoint airportPoint = new AirportPoint();
-
-            airportPoint.NavigationPoint.TypePpm = 1;
-            airportPoint.NavigationPoint.GeoCoordinate.H = airport.Local.altitude;
-            airportPoint.NavigationPoint.GeoCoordinate.Latitude = airport.Local.latitude;
-            airportPoint.NavigationPoint.GeoCoordinate.Longitude = airport.Local.longitude;
-
-            airportPoint.AirportInfo.Name = airport.Local.name.ToCharArray();
-            airportPoint.AirportInfo.Country = airport.Local.country.ToCharArray();
-            airportPoint.AirportInfo.RusName = airport.Local.rusname.ToCharArray();
-
-            airportPoint.AirportInfo.Runway.Width = airport.Runway.width;
-            airportPoint.AirportInfo.Runway.Length = airport.Runway.length;
-            airportPoint.AirportInfo.Runway.Heading = airport.Runway.heading;
-            airportPoint.AirportInfo.Runway.Latitude = airport.Runway.latitude;
-            airportPoint.AirportInfo.Runway.Longitude = airport.Runway.longitude;
-            
-            airportPoint.Screen.SizeMap = sizeMap;
-            airportPoint.Screen.RelativeX = px;
-            airportPoint.Screen.RelativeY = py;
-            
-            if(airport.Local.name == "Lipetsk")
-            {
-                airportPoint.AirportInfo.ActiveAirport = true;
-                _airPoints[0] = airportPoint.NavigationPoint;
-                EventsHelper.OnPpmCollectionEvent(_airPoints);
-                AddVisualAircraft(airport);
-            }
-            return airportPoint;
-        }
-
-        #endregion
-
+      
         #region Aircraft
 
-        private void AddVisualAircraft(Airport airport)
+        private void AddVisualAircraft()
         {
-            var aircraftPoint = PrepareAircraftPoint(airport);
-            AddVisualToPlotter(new VisualAircraft(aircraftPoint), new Point(aircraftPoint.Screen.RelativeX, aircraftPoint.Screen.RelativeY));
+            var aircraftPoint = PrepareAircraftPoint(_currentAirport);
+           AddVisualToPlotter(new VisualAircraft(aircraftPoint, _currentAirport), new Point(aircraftPoint.Screen.RelativeX, aircraftPoint.Screen.RelativeY));
         }
 
-        private AircraftPoint PrepareAircraftPoint(Airport airport)
+        private AircraftPoint PrepareAircraftPoint(AirBasePoint _currentAirport)
         {
-            var sizeMap = (uint)_plotter.Height;
-            _coordinateHelper.LatLonToPixel(airport.Local.latitude, airport.Local.longitude, sizeMap, out var px, out var py);
+            var sizeMap = (uint) _plotter.Height;
             AircraftPoint aircraftPoint = new AircraftPoint();
             aircraftPoint.Screen.SizeMap = sizeMap;
-            aircraftPoint.Screen.RelativeX = (double) px / sizeMap;
-            aircraftPoint.Screen.RelativeY = (double) py / sizeMap;
-            aircraftPoint.NavigationPoint.GeoCoordinate.Latitude = airport.Runway.latitude;
-            aircraftPoint.NavigationPoint.GeoCoordinate.Longitude = airport.Runway.longitude;
-            aircraftPoint.NavigationPoint.Measure.Psi = airport.Runway.heading;
-            aircraftPoint.NavigationPoint.TypePpm = 1;
+            aircraftPoint.Screen.RelativeX = _currentAirport.Screen.RelativeX;
+            aircraftPoint.Screen.RelativeY = _currentAirport.Screen.RelativeY;
+            aircraftPoint.NavigationPoint.GeoCoordinate.Latitude = _currentAirport.AirportInfo.Runway.Threshold.Latitude;
+            aircraftPoint.NavigationPoint.GeoCoordinate.Longitude = _currentAirport.AirportInfo.Runway.Threshold.Longitude;
+            aircraftPoint.NavigationPoint.Measure.Psi = _currentAirport.AirportInfo.Runway.Heading;
+            //aircraftPoint.Screen.SizeMap = sizeMap;
+            //aircraftPoint.Screen.RelativeX = (double) px / sizeMap;
+            //aircraftPoint.Screen.RelativeY = (double) py / sizeMap;
+            //aircraftPoint.NavigationPoint.GeoCoordinate.Latitude = airport.Runway.latitude;
+            //aircraftPoint.NavigationPoint.GeoCoordinate.Longitude = airport.Runway.longitude;
+            //aircraftPoint.NavigationPoint.Measure.Psi = airport.Runway.heading;
+            //aircraftPoint.NavigationPoint.Type = 1;
             return aircraftPoint;
         }
 
         #endregion
 
-        public void Clear()
+        public void AddVisualPpm(Point point)
         {
-            for (int i = _plotter.Children.Count - 1; i >= 0; i--)
-            {
-                if (_plotter.Children[i] is VisualAirport) continue;
-                _plotter.Children.Remove(_plotter.Children[i]);
-            }
-
-            ChangeAirportEvent(_currentAirport);
-            _countNavigationPoint = 0;
-            _routePoints.PPM.Clear();
-            for (int i = 1; i < _airPoints.Length; i++)
-                _airPoints[i] = null;
+            var sizeMap = (uint)_plotter.Height;
+            _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+            AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
         }
 
-        private void AddLineToRouteEvent(Line oldLine, Line newLine)
+
+        public void BuildBox()
         {
-            _plotter.Children.Add(oldLine);
-            _lastLine = newLine;
+            Point point;
+            var sizeMap = (uint)_plotter.Height;
+            _coordinateHelper.LocalCordToLatLon(_currentAirport.NavigationPoint.GeoCoordinate.Latitude, _currentAirport.NavigationPoint.GeoCoordinate.Longitude, -7100 * 1, 7100 * 1, out var LatT, out var LonT);
+
+            GetLatLonOfPoint(_currentAirport.NavigationPoint.GeoCoordinate.Latitude,
+                _currentAirport.NavigationPoint.GeoCoordinate.Longitude, 20000, 160, out double latLocator,
+                out double lonLocator);
+
+            _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out var PX, out var PY);
+            point = new Point(PX, PY);
+            _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+            AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+        }
+
+        private void GetLatLonOfPoint(double latThreshold, double lonThreshold, double distance, double courseThreshold, out double latLocator, out double lonLocator)
+        {
+            latLocator = (latThreshold + distance * Math.Cos(courseThreshold * Math.PI / 180) / (6371000 * Math.PI / 180));
+            lonLocator = (lonThreshold + distance * Math.Sin(courseThreshold * Math.PI / 180) / Math.Cos(latThreshold * Math.PI / 180) / (6371000 * Math.PI / 180));
+        }
+
+        public void AddDebugPm()
+        {
+            Point point;
+            var sizeMap = (uint)_plotter.Height;
+
+               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, -7100 * 1, 7100*1, out var LatT, out var LonT);
+               _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out var PX, out var PY);
+               point = new Point(PX, PY);
+               _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+               AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, -7100 * 2, 7100 * 2, out  LatT, out  LonT);
+               _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out  PX, out  PY);
+               point = new Point(PX, PY);
+               _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+               AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, -7100 * 4, 7100 * 4, out LatT, out LonT);
+               _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out PX, out PY);
+               point = new Point(PX, PY);
+               _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+               AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, -7100 * 8, 7100 * 8, out LatT, out LonT);
+               _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out PX, out PY);
+               point = new Point(PX, PY);
+               _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+               AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+
+
+
+               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, 7100 * 8, 7100 * 8, out LatT, out LonT);
+               _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out PX, out PY);
+               point = new Point(PX, PY);
+               _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+               AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, 7100 * 4, 7100 * 4, out LatT, out LonT);
+               _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out PX, out PY);
+               point = new Point(PX, PY);
+               _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+               AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, 7100 * 2, 7100 * 2, out LatT, out LonT);
+               _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out PX, out PY);
+               point = new Point(PX, PY);
+               _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+               AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, 7100 * 1, 7100 * 1, out  LatT, out  LonT);
+               _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out  PX, out  PY);
+               point = new Point(PX, PY);
+               _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+               AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+        }
+  
+        public void AddVisualAirBase()
+        {
+            var airBaseXmls = _airBaseWorker.LoadAirBaseXml();
+            foreach (var airBaseXml in airBaseXmls)
+            {
+                var sizeMap = (uint)_plotter.Height;
+                var visualAirBase = _airBaseWorker.CrateVisualAirBase(airBaseXml);
+                _coordinateHelper.LatLonToPixel(airBaseXml.latitude, airBaseXml.longitude, sizeMap, out var px, out var py);
+                AddVisualToPlotter(visualAirBase, new Point(px, py));
+            }
+          
+        }
+
+        private void AddVisualLine(Line inLine)
+        {
+            _plotter.Children.Add(inLine);
+        }
+
+        public void Clear()
+        {
+            _ppmWorker.Clear();
+            for (int i = _plotter.Children.Count - 1; i >= 0; i--)
+            {
+                if(_plotter.Children[i] is VisualAircraft) continue;
+                if (_plotter.Children[i] is VisualAirBase) continue;
+                _plotter.Children.Remove(_plotter.Children[i]);
+            }
+            EventsHelper.OnOutLineFromLastPoint(_currentAirport.Screen.LineOut);
+     
         }
 
         private void AddVisualToPlotter(UIElement ui, Point point)
         {
+            if (ui == null) return;
             _plotter.Children.Add(ui);
             Canvas.SetLeft(ui, point.X);
             Canvas.SetTop(ui, point.Y);
@@ -192,15 +200,15 @@ namespace TacticalEditor.Helpers
             if (t!=null)
             {
                 Panel.SetZIndex(ui, 100);
-
             }
         }
 
-        private void ChangeAirportEvent(AirportPoint airportPoint)
+        private void ChangeAirportEvent(AirBasePoint airportPoint)
         {
-            _lastLine = airportPoint.Screen.RouteLineOut;
+              var sizeMap = (uint)_plotter.Height;
             _currentAirport = airportPoint;
-            _airPoints[0] = airportPoint.NavigationPoint;
+            _coordinateHelper.LatLonToPixel(_currentAirport.AirportInfo.Runway.Threshold.Latitude, _currentAirport.AirportInfo.Runway.Threshold.Longitude, sizeMap, out _lX, out  _lY);
+
         }
 
         private void PlotterOnSizeChanged(object sender, SizeChangedEventArgs e)

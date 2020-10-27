@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -25,32 +26,33 @@ namespace TacticalEditor.VisualObject.VisPpm
             _coordinateHelper = new CoordinateHelper();
             EventsHelper.MenuStatusEvent += StatePpmEvent;
             EventsHelper.ChangeOfSizeEvent += ChangeOfSize;
-           PrepareRouteLine(ppmPoint);
+            PrepareRouteLine(ppmPoint);
         }
-        
+
         private void PrepareRouteLine(PpmPoint ppmPoint)
         {
-            _ppmPoint.Screen.RouteLineIn.X2 = ppmPoint.Screen.RelativeX * ppmPoint.Screen.SizeMap;
-            _ppmPoint.Screen.RouteLineIn.Y2 = ppmPoint.Screen.RelativeY * ppmPoint.Screen.SizeMap;
-            _ppmPoint.Screen.RouteLineIn.Stroke = Brushes.Black;
-            _ppmPoint.Screen.RouteLineIn.StrokeThickness = 1;
-            _ppmPoint.Screen.RouteLineOut = new Line();
-            _ppmPoint.Screen.RouteLineOut.X1 = ppmPoint.Screen.RelativeX * ppmPoint.Screen.SizeMap;
-            _ppmPoint.Screen.RouteLineOut.Y1 = ppmPoint.Screen.RelativeY * ppmPoint.Screen.SizeMap;
-            _ppmPoint.Screen.RouteLineOut.Stroke = Brushes.Black;
-            _ppmPoint.Screen.RouteLineOut.StrokeThickness = 1;
+            _ppmPoint.Screen.LineIn.X2 = ppmPoint.Screen.RelativeX * ppmPoint.Screen.SizeMap;
+            _ppmPoint.Screen.LineIn.Y2 = ppmPoint.Screen.RelativeY * ppmPoint.Screen.SizeMap;
+            _ppmPoint.Screen.LineIn.Stroke = Brushes.Black;
+            _ppmPoint.Screen.LineIn.StrokeThickness = 1;
+            _ppmPoint.Screen.LineOut = new Line();
+            _ppmPoint.Screen.LineOut.X1 = ppmPoint.Screen.RelativeX * ppmPoint.Screen.SizeMap;
+            _ppmPoint.Screen.LineOut.Y1 = ppmPoint.Screen.RelativeY * ppmPoint.Screen.SizeMap;
+            _ppmPoint.Screen.LineOut.Stroke = Brushes.Black;
+            _ppmPoint.Screen.LineOut.StrokeThickness = 1;
 
-            EventsHelper.OnAddLineToRoute(ppmPoint.Screen.RouteLineIn, _ppmPoint.Screen.RouteLineOut);
+            EventsHelper.OnAddVisualLine(ppmPoint.Screen.LineIn);
+            EventsHelper.OnOutLineFromLastPoint(_ppmPoint.Screen.LineOut);
         }
 
         private void ChangeOfSize(uint sizeMap)
         {
             _ppmPoint.Screen.SizeMap = sizeMap;
 
-            _ppmPoint.Screen.RouteLineIn.X2 =  _ppmPoint.Screen.RelativeX * sizeMap;
-            _ppmPoint.Screen.RouteLineIn.Y2 =  _ppmPoint.Screen.RelativeY * sizeMap;
-            _ppmPoint.Screen.RouteLineOut.X1 = _ppmPoint.Screen.RelativeX * sizeMap;
-            _ppmPoint.Screen.RouteLineOut.Y1 = _ppmPoint.Screen.RelativeY * sizeMap;
+            _ppmPoint.Screen.LineIn.X2 =  _ppmPoint.Screen.RelativeX * sizeMap;
+            _ppmPoint.Screen.LineIn.Y2 =  _ppmPoint.Screen.RelativeY * sizeMap;
+            _ppmPoint.Screen.LineOut.X1 = _ppmPoint.Screen.RelativeX * sizeMap;
+            _ppmPoint.Screen.LineOut.Y1 = _ppmPoint.Screen.RelativeY * sizeMap;
 
             Canvas.SetLeft(this, _ppmPoint.Screen.RelativeX * sizeMap);
             Canvas.SetTop(this, _ppmPoint.Screen.RelativeY * sizeMap);
@@ -81,11 +83,11 @@ namespace TacticalEditor.VisualObject.VisPpm
             _ppmPoint.Screen.RelativeX = point.X / _ppmPoint.Screen.SizeMap;
             _ppmPoint.Screen.RelativeY = point.Y / _ppmPoint.Screen.SizeMap;
 
-            _ppmPoint.Screen.RouteLineIn.X2 = point.X;
-            _ppmPoint.Screen.RouteLineIn.Y2 = point.Y;
+            _ppmPoint.Screen.LineIn.X2 = point.X;
+            _ppmPoint.Screen.LineIn.Y2 = point.Y;
 
-            _ppmPoint.Screen.RouteLineOut.X1 = point.X;
-            _ppmPoint.Screen.RouteLineOut.Y1 = point.Y;
+            _ppmPoint.Screen.LineOut.X1 = point.X;
+            _ppmPoint.Screen.LineOut.Y1 = point.Y;
 
             Canvas.SetLeft(this, point.X);
             Canvas.SetTop(this, point.Y);

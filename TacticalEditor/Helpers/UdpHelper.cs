@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Windows;
+using TacticalEditor.Models;
 
 namespace TacticalEditor.Helpers
 {
@@ -11,21 +13,17 @@ namespace TacticalEditor.Helpers
         private UdpClient _receiveClient;
         private UdpClient _sendClient;
 
-
-
         public UdpHelper()
         {
-            _receiveClient = new UdpClient(20500);
+            _receiveClient = new UdpClient(20060);
             _sendClient = new UdpClient();
         }
 
-
-
-        public void Receive()
+        public byte[] Receive()
         {
-            if (IsAvailable) return;
+            if (IsAvailable) return new byte[0];
             IPEndPoint ipendpoint = null;
-            byte[] packetBytes = _receiveClient.Receive(ref ipendpoint);
+            return _receiveClient.Receive(ref ipendpoint);
         }
 
         private bool IsAvailable
@@ -34,6 +32,7 @@ namespace TacticalEditor.Helpers
             {
                 if (_receiveClient.Available == 0)
                 {
+                    Thread.Sleep(10);
                     return true;
                 }
 

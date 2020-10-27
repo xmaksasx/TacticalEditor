@@ -11,23 +11,54 @@
     Margin="-15,-15,0,0"
     mc:Ignorable="d">
     <Grid>
-        <h:HelixViewport3D x:Name="myView" ShowViewCube="False" IsZoomEnabled="False" IsRotationEnabled="False">
+        <StackPanel Margin="-20,-58,-20,30">
+            <Label
+                Name="l1"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Content="qweqwe"
+                FontSize="16"
+                Foreground="#DD000000" />
+            <Label
+                Name="l2"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Content="qweqwe"
+                FontSize="16"
+                Foreground="#DD000000" />
+
+        </StackPanel>
+
+        <h:HelixViewport3D
+            x:Name="myView"
+            IsRotationEnabled="False"
+            IsZoomEnabled="False"
+            ShowViewCube="False">
             <ModelVisual3D x:Name="model">
                 <ModelVisual3D.Transform>
                     <Transform3DGroup>
                         <RotateTransform3D>
                             <RotateTransform3D.Rotation>
-                                <AxisAngleRotation3D x:Name="xxx" Angle="0" Axis="1,0,0" />
+                                <AxisAngleRotation3D
+                                    x:Name="xxx"
+                                    Angle="0"
+                                    Axis="1,0,0" />
                             </RotateTransform3D.Rotation>
                         </RotateTransform3D>
                         <RotateTransform3D>
                             <RotateTransform3D.Rotation>
-                                <AxisAngleRotation3D x:Name="yyy" Angle="0" Axis="0,1,0" />
+                                <AxisAngleRotation3D
+                                    x:Name="yyy"
+                                    Angle="0"
+                                    Axis="0,1,0" />
                             </RotateTransform3D.Rotation>
                         </RotateTransform3D>
                         <RotateTransform3D>
                             <RotateTransform3D.Rotation>
-                                <AxisAngleRotation3D x:Name="zzz" Angle="0" Axis="0,0,1" />
+                                <AxisAngleRotation3D
+                                    x:Name="zzz"
+                                    Angle="0"
+                                    Axis="0,0,1" />
                             </RotateTransform3D.Rotation>
                         </RotateTransform3D>
                     </Transform3DGroup>

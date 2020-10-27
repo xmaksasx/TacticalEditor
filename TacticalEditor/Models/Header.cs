@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace TacticalEditor.Models
 {
@@ -16,5 +17,13 @@ namespace TacticalEditor.Models
             84, 97, 99, 116, 105, 99, 97, 108, 69, 100, 105, 116, 111, 114, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         };
+
+        public byte[] GetHead(string caption)
+        {
+            byte[] bytesCap = Encoding.UTF8.GetBytes(caption);
+            byte[] head = new byte[68];
+            bytesCap.CopyTo(head, 0);
+            return head;
+        }
     }
 }

@@ -6,9 +6,15 @@ namespace TacticalEditor.Models.NavPoint
     public class NavigationPoint
     {
         /// <summary>
+        /// Имя навигационной точки
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public char[] Name = new char[16];
+
+        /// <summary>
         /// 1-АЭР, 2-ППМ
         /// </summary>
-        public double TypePpm;
+        public double Type;
 
         /// <summary>
         /// признак исполняемой НТ 0-нет, 1-да

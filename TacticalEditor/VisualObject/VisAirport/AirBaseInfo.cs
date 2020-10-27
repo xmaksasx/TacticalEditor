@@ -3,25 +3,25 @@
 namespace TacticalEditor.VisualObject.VisAirport
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct AirportInfo
+    public class  AirBaseInfo 
     {
         /// <summary>
         /// Название аэропорта на кириллице
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        public char[] Name;
+        public char[] Name = new char[20];
 
         /// <summary>
         /// Название аэропорта на латинице
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        public char[] RusName;
+        public char[] RusName = new char[20];
 
         /// <summary>
         /// Название страны
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        public char[] Country;
+        public char[] Country = new char[20];
 
         /// <summary>
         /// Признак того что маршрут начинается с этого аэропорта

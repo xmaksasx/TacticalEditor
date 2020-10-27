@@ -153,10 +153,10 @@ namespace TacticalEditor.Helpers
             {
                 int zoom = e.Delta > 0 ? 1 : -1;
                 _levelOfDetail += zoom;
-                if (_levelOfDetail < 3)
-                    _levelOfDetail = 3;
-                if (_levelOfDetail > 7)
-                    _levelOfDetail = 7;
+                if (_levelOfDetail < 2)
+                    _levelOfDetail = 2;
+                if (_levelOfDetail > 10)
+                    _levelOfDetail = 10;
                 GridResize();
             }
         }

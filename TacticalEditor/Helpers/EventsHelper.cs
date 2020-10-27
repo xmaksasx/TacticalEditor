@@ -1,6 +1,8 @@
 ﻿using System.Windows.Shapes;
+using TacticalEditor.Models;
 using TacticalEditor.Models.NavPoint;
 using TacticalEditor.VisualObject.VisAirport;
+using TacticalEditor.VisualObject.VisPpm;
 
 namespace TacticalEditor.Helpers
 {
@@ -11,10 +13,10 @@ namespace TacticalEditor.Helpers
         /// Смена аэропорта
         /// </summary>
         /// <param name="e"></param>
-        public delegate void ChangeAirport(AirportPoint e); 
+        public delegate void ChangeAirport(AirBasePoint e); 
         public static event ChangeAirport ChangeAirportEvent;
 
-        public static void OnChangeAirportEvent(AirportPoint e) =>
+        public static void OnChangeAirportEvent(AirBasePoint e) =>
             ChangeAirportEvent?.Invoke(e);
 
         #endregion
@@ -25,10 +27,23 @@ namespace TacticalEditor.Helpers
         /// Передает линию для отрисовки маршрута
         /// </summary>
         /// <param name="e"></param>
-        public delegate void AddLineToRoute(Line oldLine, Line newLine);
-        public static event AddLineToRoute AddLineToRouteEvent;
-        public static void OnAddLineToRoute(Line oldLine, Line newLine) =>
-            AddLineToRouteEvent?.Invoke(oldLine, newLine);
+        public delegate void AddVisualLine(Line visualLine);
+        public static event AddVisualLine AddVisualLineEvent;
+        public static void OnAddVisualLine(Line visualLine) =>
+            AddVisualLineEvent?.Invoke(visualLine);
+
+        #endregion
+
+        #region Передает линию выходящую из последней точки
+
+        /// <summary>
+        /// Передает линию выходящую из последней точки
+        /// </summary>
+        /// <param name="e"></param>
+        public delegate void OutLineFromLastPoint(Line outLine);
+        public static event OutLineFromLastPoint OutLineFromLastPointEvent;
+        public static void OnOutLineFromLastPoint(Line outLinee) =>
+            OutLineFromLastPointEvent?.Invoke(outLinee);
 
         #endregion
 
@@ -58,18 +73,59 @@ namespace TacticalEditor.Helpers
 
         #endregion
 
+        #region Оповещает о позиции самолета
+
+        /// <summary>
+        /// Оповещает о позиции самолета
+        /// </summary>
+        /// <param name="e"></param>
+        public delegate void ChangeAircraftCoordinate(AircraftPosition aircraft);
+        public static event ChangeAircraftCoordinate ChangeAircraftCoordinateEvent;
+        public static void OnChangeAircraftCoordinateEvent(AircraftPosition aircraft) =>
+            ChangeAircraftCoordinateEvent?.Invoke(aircraft);
+
+        #endregion
+
         #region Передает коллекцию ППМ'ов
 
         /// <summary>
         /// Передает коллекцию ППМ'ов
         /// </summary>
         /// <param name="e"></param>
-        public delegate void PpmCollection(NavigationPoint[] airPoints);
+        public delegate void PpmCollection(PpmPoint[] airPoints);
         public static event PpmCollection PpmCollectionEvent;
-        public static void OnPpmCollectionEvent(NavigationPoint[] airPoints) =>
+        public static void OnPpmCollectionEvent(PpmPoint[] airPoints) =>
             PpmCollectionEvent?.Invoke(airPoints);
 
         #endregion
+
+        #region Передает коллекцию Аэродромовв
+
+        /// <summary>
+        /// Передает коллекцию ППМ'ов
+        /// </summary>
+        /// <param name="e"></param>
+        public delegate void AirBaseCollection(AirBasePoint[] airBases);
+        public static event AirBaseCollection AirBaseCollectionEvent;
+        public static void OnAirBaseCollectionEvent(AirBasePoint[] airBases) =>
+            AirBaseCollectionEvent?.Invoke(airBases);
+
+        #endregion
+
+        #region Оповещает о построении коробочки
+        /// <summary>
+        /// Оповещает о построении коробочки
+        /// </summary>
+        public delegate void BuildBox();
+        public static event BuildBox BuildBoxEvent;
+
+        public static void OnBuildBoxEvent()
+        {
+            BuildBoxEvent?.Invoke();
+        }
+
+        #endregion
+
 
         #region Передает состояние режима
         /// <summary>
@@ -97,6 +153,23 @@ namespace TacticalEditor.Helpers
         public static void OnDestroyEvent()
         {
             DestroyEvent?.Invoke();
+        }
+
+        #endregion
+
+
+
+        #region Передает состояние режима
+        /// <summary>
+        /// Передает состояние режима
+        /// </summary>
+        /// <param name="e"></param>
+        public delegate void DebugNumber(double e);
+        public static event DebugNumber DebugNumberEvent;
+
+        public static void OnDebugNumberEvent(double e)
+        {
+            DebugNumberEvent?.Invoke(e);
         }
 
         #endregion

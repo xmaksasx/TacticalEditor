@@ -1,8 +1,8 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TacticalEditor.Helpers;
+using TacticalEditor.Models;
 
 namespace TacticalEditor
 {
@@ -15,23 +15,35 @@ namespace TacticalEditor
         private CoordinateHelper _coordinateHelper;
         private VisualObjectHelper _visualObjectHelper;
         private ProcessingLoop _processingLoop;
+        private MeasureHelper _measureHelper;
         private MenuStates _menuState;
+        private MieaPacket _mieaPacket;
 
 
         public MainWindow()
         {
             InitializeComponent();
 
+
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            _mieaPacket = new MieaPacket();
             _mapHelper = new MapHelper(Grd, ScrollViewer, 5);
             _processingLoop = new ProcessingLoop();
             _visualObjectHelper = new VisualObjectHelper(PlotterVisualObject);
             _coordinateHelper = new CoordinateHelper();
+            _measureHelper = new MeasureHelper();
+
+            EventsHelper.DebugNumberEvent += EventsHelperOnDebugNumberEvent;
             ScrollViewer.ScrollToVerticalOffset(2300);
             ScrollViewer.ScrollToHorizontalOffset(4130);
+        }
+
+        private void EventsHelperOnDebugNumberEvent(double e)
+        {
+          Dispatcher.Invoke(()=> Psi.Content = e);
         }
 
         private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -49,9 +61,6 @@ namespace TacticalEditor
         private void Grd_MouseMove(object sender, MouseEventArgs e)
         {
             var point = Mouse.GetPosition(Grd);
-            _coordinateHelper.PixelToLatLon(point, _mapHelper.SizeMap, out var lat, out var lon);
-            Latitude.Content = "Широта: " + _coordinateHelper.Grad2GradMinSec(lat);
-            Longitude.Content = "Долгота: " + _coordinateHelper.Grad2GradMinSec(lon);
         }
 
         private void Mode_OnChecked(object sender, RoutedEventArgs e)
@@ -113,6 +122,11 @@ namespace TacticalEditor
         {
             _processingLoop.Destroy();
             Application.Current.Shutdown();
+        }
+
+        private void RouteCube_OnClick(object sender, RoutedEventArgs e)
+        {
+            _visualObjectHelper.AddDebugPm();
         }
     }
 

@@ -1,33 +1,74 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Threading;
 using TacticalEditor.Models;
+using TacticalEditor.Send;
 
 namespace TacticalEditor.Helpers
 {
     class ProcessingLoop
     {
-        private Route _route;
-        private Thread _threadProcessing;
+        private ListOfNavigationPoint _listOfNavigationPoint;
+        private ListOfAirBases _listOfAirBases;
+        private Thread _threadSend;
+        private Thread _threadReceive;
         private UdpHelper _udpHelper;
+        private SendLandingStruct _sendLandingStruct;
+        private AircraftPosition _aircraftPosition;
+        private SendAircraftStruct _sendAircraftStruct;
         private bool IsLooping;
 
         public ProcessingLoop()
         {
-            IsLooping = true;
+             IsLooping = true;
+
             _udpHelper = new UdpHelper();
-            _route = new Route();
-            _threadProcessing = new Thread(MainLoop);
-            _threadProcessing.Start();
+            _aircraftPosition = new AircraftPosition();
+
+            _listOfNavigationPoint = new ListOfNavigationPoint();
+            _listOfAirBases = new ListOfAirBases();
+            _sendLandingStruct = new SendLandingStruct();
+            _sendAircraftStruct = new SendAircraftStruct();
+
+
+            _threadSend = new Thread(SendingLoop);
+            _threadSend.Start();
+            _threadReceive = new Thread(ReceivingLoop);
+            _threadReceive.Start();
         }
 
- 
-        private void MainLoop()
+
+        private void SendingLoop()
         {
             while (IsLooping)
             {
-                _udpHelper.Receive();
-                _udpHelper.Send(_route.GetByte(), "255.255.255.255",20020);
+
+                _udpHelper.Send(_listOfNavigationPoint.GetByte(true), "255.255.255.255", 20041);
+                _udpHelper.Send(_listOfAirBases.GetByte(), "255.255.255.255", 20020);
+                _udpHelper.Send(_sendLandingStruct.GetByte(), "255.255.255.255", 20020);
+                _udpHelper.Send(_sendAircraftStruct.GetByte(_aircraftPosition), "255.255.255.255", 20020);
                 Thread.Sleep(20);
+            }
+        }
+
+        private void ReceivingLoop()
+        {
+            while (IsLooping)
+            {
+                var receivedBytes = _udpHelper.Receive();
+                if (receivedBytes.Length == 0) continue;
+                string header = System.Text.Encoding.UTF8.GetString(receivedBytes, 0, 30).Trim('\0');
+                ProcessingPackage(header, receivedBytes);
+            }
+        }
+        
+
+        private void ProcessingPackage(string header, byte[] receivedBytes)
+        {
+            switch (header)
+            {
+                case "Aircraft_Position":
+                    ConvertHelper.ByteToObject(receivedBytes, _aircraftPosition);
+                    break;
             }
         }
 
@@ -35,5 +76,6 @@ namespace TacticalEditor.Helpers
         {
             IsLooping = false;
         }
+
     }
 }

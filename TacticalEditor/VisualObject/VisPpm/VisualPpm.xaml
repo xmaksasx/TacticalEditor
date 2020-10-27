@@ -4,23 +4,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Width="30"
     Height="30"
-    ClipToBounds="True"
     Margin="-15,-15,0,0"
+    ClipToBounds="True"
     PreviewMouseLeftButtonDown="VisualPoint_OnPreviewMouseLeftButtonDown"
     PreviewMouseLeftButtonUp="VisualPoint_OnPreviewMouseLeftButtonUp"
     PreviewMouseMove="VisualPoint_OnPreviewMouseMove">
-    <Grid     ClipToBounds="True">
-        <Grid     ClipToBounds="True"
+    <Grid ClipToBounds="True">
+        <Grid
             x:Name="Root"
             Width="30"
-            Height="30">
+            Height="30"
+            ClipToBounds="True">
             <Ellipse
-                ClipToBounds="True"
                 x:Name="El"
                 Width="30"
                 Height="30"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                ClipToBounds="True"
                 Fill="#3F9B9B9B"
                 Stroke="Black"
                 StrokeThickness="0.6" />

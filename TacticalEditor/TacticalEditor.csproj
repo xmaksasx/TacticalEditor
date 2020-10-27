@@ -59,17 +59,9 @@
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.6.0.325, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignThemes.2.6.0\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -82,32 +74,43 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\ConvertHelper.cs" />
     <Compile Include="Helpers\EventsHelper.cs" />
+    <Compile Include="Helpers\LandingHelper.cs" />
+    <Compile Include="Helpers\MeasureHelper.cs" />
     <Compile Include="Helpers\ProcessingLoop.cs" />
     <Compile Include="Helpers\UdpHelper.cs" />
     <Compile Include="Helpers\VisualObjectHelper.cs" />
-    <Compile Include="VisualObject\VisAirport\AirportInfo.cs" />
+    <Compile Include="Models\AircraftPosition.cs" />
+    <Compile Include="Models\Landing.cs" />
+    <Compile Include="Models\MieaPacket.cs" />
+    <Compile Include="Send\ListOfAirBases.cs" />
+    <Compile Include="Send\ListOfNavigationPoint.cs" />
+    <Compile Include="Send\SendAircraftStruct.cs" />
+    <Compile Include="Send\SendLandingStruct.cs" />
+    <Compile Include="VisualObject\VisAirport\AirBaseInfo.cs" />
     <Compile Include="VisualObject\VisAirport\RunwayInfo.cs" />
     <Compile Include="Models\NavPoint\NavigationPoint.cs" />
     <Compile Include="Models\NavPoint\Measure.cs" />
     <Compile Include="Models\Header.cs" />
-    <Compile Include="Models\ModelXml\Airport.cs" />
+    <Compile Include="ModelsXml\Aerodrome.cs" />
     <Compile Include="VisualObject\VisAircraft\AircraftPoint.cs" />
     <Compile Include="VisualObject\VisAircraft\VisualAircraft.xaml.cs">
       <DependentUpon>VisualAircraft.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VisualObject\VisAirport\AirportPoint.cs" />
+    <Compile Include="VisualObject\VisAirport\AirBasePoint.cs" />
     <Compile Include="Models\NavPoint\GeoCoordinate.cs" />
     <Compile Include="VisualObject\VisPpm\PpmPoint.cs" />
-    <Compile Include="Models\ModelXml\RoutePoints.cs" />
-    <Compile Include="Models\Route.cs" />
+    <Compile Include="ModelsXml\RoutePoints.cs" />
     <Compile Include="Models\ScreenCoordinate.cs" />
-    <Compile Include="VisualObject\VisAirport\VisualAirport.xaml.cs">
-      <DependentUpon>VisualAirport.xaml</DependentUpon>
+    <Compile Include="VisualObject\VisAirport\VisualAirBase.xaml.cs">
+      <DependentUpon>VisualAirBase.xaml</DependentUpon>
     </Compile>
     <Compile Include="VisualObject\VisPpm\VisualPpm.xaml.cs">
       <DependentUpon>VisualPpm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WorkingPoints\AirBaseWorker.cs" />
+    <Compile Include="WorkingPoints\PpmWorker.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -126,7 +129,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VisualObject\VisAirport\VisualAirport.xaml">
+    <Page Include="VisualObject\VisAirport\VisualAirBase.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -165,5 +168,6 @@
   <ItemGroup>
     <Resource Include="icons8_worldwide_location.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

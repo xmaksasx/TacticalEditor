@@ -29,5 +29,7 @@ namespace TacticalEditor.Models.NavPoint
         /// высота навигационной точки над уровнем моря [м]
         /// </summary>
         public double H { get; set; }
+
+        
     }
 }

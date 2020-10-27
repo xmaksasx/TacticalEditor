@@ -49,9 +49,9 @@
                 <materialDesign:PackIcon
                     Width="30"
                     Height="30"
-                    Foreground="{StaticResource SecondaryAccentBrush}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    Foreground="{StaticResource SecondaryAccentBrush}"
                     Kind="Close" />
             </Button>
         </Grid>
@@ -147,6 +147,12 @@
                             Tag="Measure">
                             <materialDesign:PackIcon Kind="TapeMeasure" />
                         </RadioButton>
+                        <Button
+                            x:Name="RouteCube"
+                            Click="RouteCube_OnClick"
+                            Style="{StaticResource MaterialDesignFlatButton}">
+                            <materialDesign:PackIcon Kind="Routes" />
+                        </Button>
                     </StackPanel>
 
                 </ToolBar>
@@ -165,6 +171,32 @@
                 Grid.Row="1"
                 BorderBrush="#FF52525B"
                 BorderThickness="1,1,2,1" />
+
+            <Label
+                x:Name="Psi"
+                Grid.Row="1"
+                Margin="0,0,0,65"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                FontSize="15" />
+
+            <Label
+                x:Name="X"
+                Grid.Row="1"
+                Margin="0,0,0,50"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom" />
+            <Label
+                x:Name="Z"
+                Grid.Row="1"
+                Margin="0,0,0,35"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom" />
+
+
+
+
+
             <Label
                 x:Name="Latitude"
                 Grid.Row="1"
@@ -194,8 +226,7 @@
                 <Canvas
                     x:Name="PlotterVisualObject"
                     Width="{Binding Width, ElementName=Grd}"
-                    Height="{Binding Height, ElementName=Grd}">
-                </Canvas>
+                    Height="{Binding Height, ElementName=Grd}" />
             </Grid>
         </ScrollViewer>
     </Grid>

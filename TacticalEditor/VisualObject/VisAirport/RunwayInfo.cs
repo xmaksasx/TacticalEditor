@@ -1,19 +1,20 @@
 ﻿using System.Runtime.InteropServices;
+using TacticalEditor.Models.NavPoint;
 
 namespace TacticalEditor.VisualObject.VisAirport
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct RunwayInfo
     {
-        /// <summary>
-        /// координата X от ЛА [км]
-        /// </summary>
-        public decimal X;
+        ///// <summary>
+        ///// координата X от ЛА [км]
+        ///// </summary>
+        //public double X;
 
-        /// <summary>
-        /// координата Z от ЛА [км]
-        /// </summary>
-        public decimal Y;
+        ///// <summary>
+        ///// координата Z от ЛА [км]
+        ///// </summary>
+        //public double Y;
 
         /// <summary>
         /// Курс ВПП
@@ -23,22 +24,47 @@ namespace TacticalEditor.VisualObject.VisAirport
         /// <summary>
         /// Длина ВПП
         /// </summary>
-        public decimal Length;
+        public double Length;
 
         /// <summary>
         /// Ширина ВПП
         /// </summary>
-        public decimal Width;
+        public double Width;
+
+        ///// <summary>
+        ///// Широта начала ВПП
+        ///// </summary>
+        //public double Latitude;
+
+        ///// <summary>
+        ///// Долгота начала ВПП
+        ///// </summary>
+        //public double Longitude;
 
         /// <summary>
-        /// Широта начала ВПП
+        /// Торец ВПП
         /// </summary>
-        public double Latitude;
+        public GeoCoordinate Threshold;
 
         /// <summary>
-        /// Долгота начала ВПП
+        /// Глиссадный маяк
         /// </summary>
-        public double Longitude;
+        public GeoCoordinate GlideSlope;
+
+        /// <summary>
+        /// Курсовой маяк
+        /// </summary>
+        public GeoCoordinate Localizer;
+
+        /// <summary>
+        /// БПРМ
+        /// </summary>
+        public GeoCoordinate LocatorMiddle;
+
+        /// <summary>
+        /// ДПРМ
+        /// </summary>
+        public GeoCoordinate LocatorOuter;
 
     }
 }

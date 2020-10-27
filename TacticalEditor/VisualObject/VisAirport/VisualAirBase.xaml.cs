@@ -9,59 +9,65 @@ namespace TacticalEditor.VisualObject.VisAirport
     /// <summary>
     /// Interaction logic for Airport.xaml
     /// </summary>
-    public partial class VisualAirport
+    public partial class VisualAirBase
     {
-        private readonly AirportPoint _airportPoint;
+        private readonly AirBasePoint _airportPoint;
         private CoordinateHelper _coordinateHelper;
 
-        public VisualAirport(AirportPoint airportPoint)
+        public VisualAirBase(AirBasePoint airportPoint)
         {
             InitializeComponent();
             EventsHelper.ChangeAirportEvent += ChangeAirportEvent;
+            EventsHelper.ChangeOfSizeEvent += ChangeOfSize;
             _coordinateHelper = new CoordinateHelper();
             _airportPoint = airportPoint;
             PrepareRouteLine(_airportPoint);
             PrepareAirport(_airportPoint);
-            EventsHelper.ChangeOfSizeEvent += ChangeOfSize;
+
         }
-        private void PrepareRouteLine(AirportPoint airportPoint)
+        private void PrepareRouteLine(AirBasePoint airportPoint)
         {
-            airportPoint.Screen.RouteLineOut = new Line();
-            airportPoint.Screen.RouteLineOut.X1 = airportPoint.Screen.RelativeX;
-            airportPoint.Screen.RouteLineOut.Y1 = airportPoint.Screen.RelativeY;
-            airportPoint.Screen.RouteLineOut.Stroke = Brushes.Black;
-            airportPoint.Screen.RouteLineOut.StrokeThickness = 1;
+            airportPoint.Screen.LineOut = new Line();
+            airportPoint.Screen.LineOut.X1 = airportPoint.Screen.RelativeX;
+            airportPoint.Screen.LineOut.Y1 = airportPoint.Screen.RelativeY;
+            airportPoint.Screen.LineOut.Stroke = Brushes.Black;
+            airportPoint.Screen.LineOut.StrokeThickness = 1;
         }
    
-        private void PrepareAirport(AirportPoint airportPoint)
+        private void PrepareAirport(AirBasePoint airportPoint)
         {
            Heading.Angle = _airportPoint.AirportInfo.Runway.Heading;
            if (_airportPoint.AirportInfo.ActiveAirport)
                VisualAirport_OnPreviewMouseDoubleClick(null, null);
         }
 
-        private void ChangeAirportEvent(AirportPoint e)
+        private void ChangeAirportEvent(AirBasePoint e)
         {
-            _airportPoint.AirportInfo.ActiveAirport = false;
-            El.Stroke = new SolidColorBrush(Colors.Black);
-            El.StrokeThickness = 0.6;
+            if (e.Guid !=_airportPoint.Guid)
+            {
+                _airportPoint.AirportInfo.ActiveAirport = false;
+                El.Stroke = new SolidColorBrush(Colors.Black);
+                El.StrokeThickness = 0.6;
+            }
+
         }
 
         private void ChangeOfSize(uint sizeMap)
         {
             _coordinateHelper.LatLonToPixel(_airportPoint.NavigationPoint.GeoCoordinate.Latitude, _airportPoint.NavigationPoint.GeoCoordinate.Longitude, sizeMap, out var px, out var py);
-            _airportPoint.Screen.RouteLineOut.X1 = px;
-            _airportPoint.Screen.RouteLineOut.Y1 = py;
+            _airportPoint.Screen.LineOut.X1 = px;
+            _airportPoint.Screen.LineOut.Y1 = py;
             Canvas.SetLeft(this, px);
             Canvas.SetTop(this, py);
         }
 
         private void VisualAirport_OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            EventsHelper.OnChangeAirportEvent(_airportPoint);
             _airportPoint.AirportInfo.ActiveAirport = true;
             El.Stroke = new SolidColorBrush(Colors.LimeGreen);
             El.StrokeThickness = 1.5;
+            EventsHelper.OnChangeAirportEvent(_airportPoint);
+            EventsHelper.OnOutLineFromLastPoint(_airportPoint.Screen.LineOut);
         }
     }
 }
