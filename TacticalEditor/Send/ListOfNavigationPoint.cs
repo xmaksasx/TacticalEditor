@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Elevation;
@@ -82,11 +83,16 @@ namespace TacticalEditor.Send
                 }
                 else
                 {
-
-                    var tt  = BitConverter.GetBytes(Points[i].NavigationPoint.Name[0]);
-
-                    Encoding.BigEndianUnicode.GetChars(tt,0, tt.Length, Points[i].NavigationPoint.Name,0);
-                    ConvertHelper.ObjectToByte(Points[i].NavigationPoint);
+                    var namePpm = new string(Points[i].NavigationPoint.Name).Trim('\0');
+                    var nameBytes = Encoding.BigEndianUnicode.GetBytes(namePpm);
+                    Array.Copy(nameBytes, Points[i].NavigationPoint.Name, nameBytes.Length);
+                    Array.Reverse(Points[i].NavigationPoint.Name, 0, 8);
+                    Array.Reverse(Points[i].NavigationPoint.Name, 8, 8);
+                    result.AddRange(ConvertHelper.ObjectToByte(Points[i].NavigationPoint));
+                    Array.Clear(Points[i].NavigationPoint.Name, 0, Points[i].NavigationPoint.Name.Length);
+                  
+                    Array.Copy(namePpm.ToCharArray(), Points[i].NavigationPoint.Name, namePpm.ToCharArray().Length);
+                  
                 }
 
 
@@ -112,7 +118,7 @@ namespace TacticalEditor.Send
                 if (Points[i] == null) continue;
 
                 Points[i].NavigationPoint.Measure.Distance =
-                    _measureHelper.GetDistanceInMLatLon(Points[i].NavigationPoint.GeoCoordinate.Latitude,
+                    _measureHelper.GetDistanceInKmLatLon(Points[i].NavigationPoint.GeoCoordinate.Latitude,
                         Points[i].NavigationPoint.GeoCoordinate.Longitude,
                         _aircraft.GeoCoordinate.Latitude, _aircraft.GeoCoordinate.Longitude);
                 Points[i].NavigationPoint.Measure.Psi =

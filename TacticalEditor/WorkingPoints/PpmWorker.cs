@@ -60,8 +60,6 @@ namespace TacticalEditor.WorkingPoints
         {
 
             PpmPoint ppmPoint = new PpmPoint();
-            if(_countNavigationPoint == 0)
-                ppmPoint.NavigationPoint.Executable = 1;
             ppmPoint.NavigationPoint.Name = new char[16];
             ppmPoint.NumberInRoute = _countNavigationPoint;
             ppmPoint.Screen.RelativeX = point.X / _sizeMap;
@@ -81,6 +79,8 @@ namespace TacticalEditor.WorkingPoints
 
             NavigationPoint airPoint = new NavigationPoint();
             _coordinateHelper.PixelToLatLon(point, _sizeMap, out var lat, out var lon);
+            if (_countNavigationPoint == 1)
+                airPoint.Executable = 1;
             airPoint.GeoCoordinate.Latitude = lat;
             airPoint.GeoCoordinate.Longitude = lon;
             _coordinateHelper.LocalCordToXZ(_activeAirbase.AirportInfo.Runway.Threshold.Latitude, _activeAirbase.AirportInfo.Runway.Threshold.Longitude, lat,lon, out var x, out var z);
