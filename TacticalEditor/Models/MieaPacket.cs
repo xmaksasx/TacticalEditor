@@ -2,7 +2,6 @@
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using TacticalEditor.Helpers;
-using TacticalEditor.ModelsXml;
 using TacticalEditor.VisualObject.VisAirport;
 using TacticalEditor.VisualObject.VisPpm;
 
@@ -80,7 +79,7 @@ namespace TacticalEditor.Models
             Airport.LON = airpoints.NavigationPoint.GeoCoordinate.Longitude;
             Airport.dM = 0;
             Airport.Elev = airpoints.NavigationPoint.GeoCoordinate.H;
-            Array.Copy(airpoints.AirportInfo.Name, Airport.NAME, airpoints.AirportInfo.Name.Length);
+            Array.Copy(airpoints.AirportInfo.Name, Airport.NAME, Airport.NAME.Length);
             Airport.end_code = 06;
             Airport.end_code_side = 3;
             Airport.LAT_RWY = airpoints.AirportInfo.Runway.Threshold.Latitude;

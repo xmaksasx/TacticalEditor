@@ -15,6 +15,7 @@ namespace TacticalEditor.Helpers
         private SendLandingStruct _sendLandingStruct;
         private AircraftPosition _aircraftPosition;
         private SendAircraftStruct _sendAircraftStruct;
+        private SendRouteToIup _sendRouteToIup;
         private bool IsLooping;
 
         public ProcessingLoop()
@@ -28,7 +29,7 @@ namespace TacticalEditor.Helpers
             _listOfAirBases = new ListOfAirBases();
             _sendLandingStruct = new SendLandingStruct();
             _sendAircraftStruct = new SendAircraftStruct();
-
+            _sendRouteToIup = new SendRouteToIup();
 
             _threadSend = new Thread(SendingLoop);
             _threadSend.Start();
@@ -42,10 +43,11 @@ namespace TacticalEditor.Helpers
             while (IsLooping)
             {
 
-                _udpHelper.Send(_listOfNavigationPoint.GetByte(true), "255.255.255.255", 20041);
+                _udpHelper.Send(_listOfNavigationPoint.GetByte(), "255.255.255.255", 20041);
                 _udpHelper.Send(_listOfAirBases.GetByte(), "255.255.255.255", 20020);
                 _udpHelper.Send(_sendLandingStruct.GetByte(), "255.255.255.255", 20020);
                 _udpHelper.Send(_sendAircraftStruct.GetByte(_aircraftPosition), "255.255.255.255", 20020);
+                _udpHelper.Send(_sendRouteToIup.GetByte(), "255.255.255.255", 20041);
                 Thread.Sleep(20);
             }
         }

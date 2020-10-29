@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace TacticalEditor.Models.NavPoint
 {
@@ -36,5 +37,6 @@ namespace TacticalEditor.Models.NavPoint
         /// Рассчетные параметры 
         /// </summary>
         public Measure Measure;
+
     }
 }

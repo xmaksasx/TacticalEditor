@@ -88,6 +88,7 @@
     <Compile Include="Send\ListOfNavigationPoint.cs" />
     <Compile Include="Send\SendAircraftStruct.cs" />
     <Compile Include="Send\SendLandingStruct.cs" />
+    <Compile Include="Send\SendRouteToIup.cs" />
     <Compile Include="VisualObject\VisAirport\AirBaseInfo.cs" />
     <Compile Include="VisualObject\VisAirport\RunwayInfo.cs" />
     <Compile Include="Models\NavPoint\NavigationPoint.cs" />

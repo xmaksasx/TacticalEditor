@@ -6,6 +6,7 @@ namespace TacticalEditor.VisualObject.VisPpm
 
     public class PpmPoint
     {
+       
         /// <summary>
         /// номер навигационной точки в маршруте (для ППМ)
         /// </summary>
