@@ -15,13 +15,7 @@ namespace TacticalEditor.Send
     class SendRouteToIup
     {
         private RouteToIup _routeToIup = new RouteToIup();
-        private RouteToIup1 _routeToIup1 = new RouteToIup1();
-        MeasureHelper _measureHelper = new MeasureHelper();
-        CoordinateHelper _coordinateHelper = new CoordinateHelper();
-        AircraftPosition _aircraft = new AircraftPosition();
-        AirBasePoint _airBasePoint = new AirBasePoint();
-
-
+        private AirBasePoint _airBasePoint = new AirBasePoint();
 
         public SendRouteToIup()
         {
@@ -35,34 +29,30 @@ namespace TacticalEditor.Send
             };
         }
 
-        private void ChangeAirportEvent(AirBasePoint e)
+        private void ChangeAirportEvent(AirBasePoint airbase)
         {
-            _airBasePoint = e;
-            _routeToIup.DepartureAirportInfo = _airBasePoint.AirportInfo;
-            _routeToIup.DepartureNavigationPoint = _airBasePoint.NavigationPoint;
-            _routeToIup.ArrivalAirportInfo = _airBasePoint.AirportInfo;
-            _routeToIup.ArrivalNavigationPoint = _airBasePoint.NavigationPoint;
-            SetAirport(_routeToIup1.ArrivalAirport);
-            SetAirport(_routeToIup1.DepartureAirport);
+            _airBasePoint = airbase;
+            SetAirport(airbase, _routeToIup.ArrivalAirport);
+            SetAirport(airbase, _routeToIup.DepartureAirport);
         }
 
-        private void SetAirport(Airport airport)
+        private void SetAirport(AirBasePoint airbase, Airport airport)
         {
-            Array.Copy(ReverseArray(_airBasePoint.AirportInfo.Name), airport.Name, airport.Name.Length);
-            airport.Runway = _airBasePoint.AirportInfo.Runway;
+            Array.Copy(ToBigEndian(airbase.AirportInfo.RusName), airport.Name, airport.Name.Length);
+            airport.Runway = airbase.AirportInfo.Runway;
         }
 
 
         private void PpmCollection(PpmPoint[] ppmPoints)
         {
             _routeToIup.CountPoints = 0;
+
             for (int i = 0; i < ppmPoints.Length; i++)
             {
                 if (ppmPoints[i] == null) continue;
-                {
                     _routeToIup.CountPoints++;
-                    _routeToIup.NavigationPoints[i] = ppmPoints[i].NavigationPoint;
-                }
+                _routeToIup.NavigationPoints[i] = ppmPoints[i].NavigationPoint;
+
             }
         }
 
@@ -70,127 +60,62 @@ namespace TacticalEditor.Send
 
         public byte[] GetByte()
         {
-            Calc();
             result.Clear();
             result.AddRange(_routeToIup.Head);
-            if (_routeToIup.DepartureAirportInfo != null)
-                PrepareAirBase(result, _routeToIup.DepartureAirportInfo, _routeToIup.DepartureNavigationPoint);
-            for (int i = 0; i < _routeToIup.NavigationPoints.Length; i++)
+            result.AddRange(BitConverter.GetBytes(_routeToIup.CountPoints));
+            _routeToIup.DepartureAirport.Runway = _airBasePoint.AirportInfo.Runway;
+            result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.DepartureAirport));
+
+            foreach (var rnp in _routeToIup.NavigationPoints)
             {
-                var rnp = _routeToIup.NavigationPoints[i];
                 if (rnp == null)
                 {
-                    rnp = new NavigationPoint {Type = -1};
-                    result.AddRange(ConvertHelper.ObjectToByte(rnp));
+                    var np = PrepareNavigationPoint(new NavigationPoint {Type = -1});
+                    result.AddRange(ConvertHelper.ObjectToByte(np));
                 }
-
                 else
                 {
-                    var namePpm = new string(rnp.Name).Trim('\0');
-                    var nameBytes = ReverseArray(rnp.Name);
-                    Array.Copy(nameBytes, rnp.Name, nameBytes.Length);
-                    result.AddRange(ConvertHelper.ObjectToByte(rnp));
-                    Array.Clear(rnp.Name, 0, rnp.Name.Length);
-                    Array.Copy(namePpm.ToCharArray(), rnp.Name, namePpm.ToCharArray().Length);
+                    var np = PrepareNavigationPoint(rnp);
+                    result.AddRange(ConvertHelper.ObjectToByte(np));
                 }
             }
 
-            if (_routeToIup.ArrivalAirportInfo != null)
-                PrepareAirBase(result, _routeToIup.ArrivalAirportInfo, _routeToIup.ArrivalNavigationPoint);
+            _routeToIup.ArrivalAirport.Runway = _airBasePoint.AirportInfo.Runway;
+            result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.ArrivalAirport));
 
-            byte[] bytes = ConvertHelper.ObjectToByte(_routeToIup);
+
+            byte[] bytes = result.ToArray();// ConvertHelper.ObjectToByte(_routeToIup);
 
             for (int i = 68; i < bytes.Length; i += 8)
                 Array.Reverse(bytes, i, 8);
             return bytes;
         }
 
-        private byte[] ReverseArray(char[] str)
+        private NavigationPoint PrepareNavigationPoint(NavigationPoint navigationPoint)
+        {
+            var np = new NavigationPoint();
+            Array.Copy(ToBigEndian(navigationPoint.Name), np.Name, np.Name.Length);
+            np.Executable = navigationPoint.Executable;
+            np.PrPro = navigationPoint.PrPro;
+            np.Type = navigationPoint.Type;
+            np.GeoCoordinate = navigationPoint.GeoCoordinate;
+            np.Measure = navigationPoint.Measure;
+            return np;
+        }
+
+        private byte[] ToBigEndian(char[] str)
         {
             var nameBytes = Encoding.BigEndianUnicode.GetBytes(new string(str).Trim('\0'));
             var bytes = new byte[str.Length];
-            nameBytes.CopyTo(bytes,0);
+            nameBytes.CopyTo(bytes, 0);
             for (int i = 0; i < bytes.Length; i = i + 8)
                 Array.Reverse(bytes, i, 8);
-
             return bytes;
-        }
-
-
-        private void PrepareAirBase(List<byte> result, AirBaseInfo Airport, NavigationPoint rnp)
-        {
-            var nameAir = new string(Airport.Name).Trim('\0');
-            var nameBytes = ReverseArray(Airport.Name);
-            Array.Copy(nameBytes, Airport.Name, nameBytes.Length);
-
-            var nameAirRus = new string(Airport.RusName).Trim('\0');
-            nameBytes = ReverseArray(Airport.RusName);
-            Array.Copy(nameBytes, Airport.RusName, nameBytes.Length);
-
-            var nameAirCountry = new string(Airport.Country).Trim('\0');
-            nameBytes = ReverseArray(Airport.Country);
-            Array.Copy(nameBytes, Airport.Country, nameBytes.Length);
-
-            result.AddRange(ConvertHelper.ObjectToByte(Airport));
-
-
-            var namePpm = new string(rnp.Name).Trim('\0');
-            nameBytes = ReverseArray(rnp.Name);
-            Array.Copy(nameBytes, rnp.Name, nameBytes.Length);
-
-            result.AddRange(ConvertHelper.ObjectToByte(rnp));
-
-            Array.Clear(rnp.Name, 0, rnp.Name.Length);
-            Array.Clear(Airport.Name, 0, Airport.Name.Length);
-            Array.Clear(Airport.RusName, 0, Airport.RusName.Length);
-            Array.Clear(Airport.Country, 0, Airport.Country.Length);
-
-            Array.Copy(namePpm.ToCharArray(), rnp.Name, namePpm.ToCharArray().Length);
-            Array.Copy(nameAir.ToCharArray(), Airport.Name, nameAir.ToCharArray().Length);
-            Array.Copy(nameAirRus.ToCharArray(), Airport.RusName, nameAirRus.ToCharArray().Length);
-            Array.Copy(nameAirCountry.ToCharArray(), Airport.Country, nameAirCountry.ToCharArray().Length);
-
-
-
-        }
-
-        private void Calc()
-        {
-            for (int i = 0; i < _routeToIup.NavigationPoints.Length; i++)
-            {
-                if (_routeToIup.NavigationPoints[i] == null) continue;
-
-                _routeToIup.NavigationPoints[i].Measure.Distance =
-                    _measureHelper.GetDistanceInKmLatLon(_routeToIup.NavigationPoints[i].GeoCoordinate.Latitude,
-                        _routeToIup.NavigationPoints[i].GeoCoordinate.Longitude,
-                        _aircraft.GeoCoordinate.Latitude, _aircraft.GeoCoordinate.Longitude);
-                _routeToIup.NavigationPoints[i].Measure.Psi =
-                    _measureHelper.GetDegreesAzimuthLatLon(_routeToIup.NavigationPoints[i].GeoCoordinate.Latitude,
-                        _routeToIup.NavigationPoints[i].GeoCoordinate.Longitude,
-                        _aircraft.GeoCoordinate.Latitude, _aircraft.GeoCoordinate.Longitude);
-                _measureHelper.GetDegreesAzimuthLatLon(_routeToIup.NavigationPoints[i].GeoCoordinate.Latitude,
-                    _routeToIup.NavigationPoints[i].GeoCoordinate.Longitude,
-                    _aircraft.GeoCoordinate.Latitude, _aircraft.GeoCoordinate.Longitude);
-            }
         }
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     class RouteToIup : Header
-    {
-        public double CountPoints;
-        public AirBaseInfo DepartureAirportInfo;
-        public NavigationPoint DepartureNavigationPoint;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        public NavigationPoint[] NavigationPoints = new NavigationPoint[20];
-
-        public AirBaseInfo ArrivalAirportInfo;
-        public NavigationPoint ArrivalNavigationPoint;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    class RouteToIup1 : Header
     {
         public double CountPoints;
         public Airport DepartureAirport = new Airport();

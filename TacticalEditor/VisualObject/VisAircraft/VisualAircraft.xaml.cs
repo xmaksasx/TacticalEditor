@@ -11,7 +11,7 @@ namespace TacticalEditor.VisualObject.VisAirCraft
     /// <summary>
     /// Interaction logic for Aircraft.xaml
     /// </summary>
-    public partial class VisualAircraft : UserControl
+    public partial class VisualAircraft
     {
         private readonly AircraftPoint _aircraftPoint;
         private CoordinateHelper _coordinateHelper;

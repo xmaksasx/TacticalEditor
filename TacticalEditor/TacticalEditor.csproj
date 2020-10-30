@@ -74,6 +74,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Calculate\CalculateAirBases.cs" />
+    <Compile Include="Calculate\CalculatePpmPoints.cs" />
     <Compile Include="Helpers\ConvertHelper.cs" />
     <Compile Include="Helpers\EventsHelper.cs" />
     <Compile Include="Helpers\LandingHelper.cs" />

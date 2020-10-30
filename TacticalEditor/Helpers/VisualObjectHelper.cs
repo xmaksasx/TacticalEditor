@@ -184,8 +184,8 @@ namespace TacticalEditor.Helpers
                 if (_plotter.Children[i] is VisualAirBase) continue;
                 _plotter.Children.Remove(_plotter.Children[i]);
             }
+
             EventsHelper.OnOutLineFromLastPoint(_currentAirport.Screen.LineOut);
-     
         }
 
         private void AddVisualToPlotter(UIElement ui, Point point)

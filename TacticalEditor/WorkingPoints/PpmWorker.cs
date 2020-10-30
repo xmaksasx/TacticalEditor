@@ -14,13 +14,13 @@ namespace TacticalEditor.WorkingPoints
         private uint _sizeMap;
         private Line _inLine;
         private readonly CoordinateHelper _coordinateHelper;
-        private PpmPoint[] _navigationPoints;
+        private PpmPoint[] _ppmPoints;
         private AirBasePoint _activeAirbase;
 
         public PpmWorker()
         {
             _coordinateHelper = new CoordinateHelper();
-            _navigationPoints = new PpmPoint[20];
+            _ppmPoints = new PpmPoint[20];
             EventsHelper.ChangeOfSizeEvent += ChangeOfSizeEvent;
             EventsHelper.ChangeAirportEvent += ChangeAirportEvent; ;
             EventsHelper.OutLineFromLastPointEvent += OutLineFromLastPointEvent;
@@ -50,8 +50,8 @@ namespace TacticalEditor.WorkingPoints
             }
             _countNavigationPoint++;
             var ppmPoint = PreparePpmPoint(point);
-            _navigationPoints[_countNavigationPoint-1] = ppmPoint;
-            EventsHelper.OnPpmCollectionEvent(_navigationPoints);
+            _ppmPoints[_countNavigationPoint-1] = ppmPoint;
+            EventsHelper.OnPpmCollectionEvent(_ppmPoints);
             return new VisualPpm(ppmPoint);
 
         }
@@ -93,12 +93,12 @@ namespace TacticalEditor.WorkingPoints
 
         public void Clear()
         {
-            for (int i = 0; i < _navigationPoints.Length; i++)
+            for (int i = 0; i < _ppmPoints.Length; i++)
             {
-                _navigationPoints[i] = null;
+                _ppmPoints[i] = null;
             }
             _countNavigationPoint = 0;
-
+            EventsHelper.OnPpmCollectionEvent(_ppmPoints);
         }
    
     }

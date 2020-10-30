@@ -1,5 +1,4 @@
-﻿using System;
-using TacticalEditor.Helpers;
+﻿using TacticalEditor.Helpers;
 using TacticalEditor.Models;
 using TacticalEditor.VisualObject.VisAirport;
 
@@ -61,10 +60,8 @@ namespace TacticalEditor.Send
             _landing.IndicatorLocIsVisible = _landingHelper.IndicatorLocIsVisible(distanceLoc, _aircraft.GeoCoordinate.H,
                 _airBase.NavigationPoint.GeoCoordinate.H, _landing.IndicatorLoc) ? 1 : 0;
 
-
             _landing.IndicatorGsIsVisible = _landingHelper.IndicatorGsIsVisible(distanceGs, _aircraft.GeoCoordinate.H,
                 _airBase.NavigationPoint.GeoCoordinate.H, _landing.IndicatorLoc) ? 1 : 0;
-
 
             _landing.CourseOM = _landingHelper.CourseToLocator(_aircraft.GeoCoordinate.X,
                 _aircraft.GeoCoordinate.Z, _aircraft.Risk,_airBase.AirportInfo.Runway.LocatorOuter.X,

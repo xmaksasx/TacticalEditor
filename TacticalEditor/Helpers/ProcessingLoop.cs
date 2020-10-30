@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using TacticalEditor.Calculate;
 using TacticalEditor.Models;
 using TacticalEditor.Send;
 
@@ -16,6 +17,8 @@ namespace TacticalEditor.Helpers
         private AircraftPosition _aircraftPosition;
         private SendAircraftStruct _sendAircraftStruct;
         private SendRouteToIup _sendRouteToIup;
+        private CalculatePpmPoints _calculatePpmPoints;
+        private CalculateAirBases _calculateAirBases;
         private bool IsLooping;
 
         public ProcessingLoop()
@@ -30,6 +33,8 @@ namespace TacticalEditor.Helpers
             _sendLandingStruct = new SendLandingStruct();
             _sendAircraftStruct = new SendAircraftStruct();
             _sendRouteToIup = new SendRouteToIup();
+            _calculatePpmPoints = new CalculatePpmPoints();
+            _calculateAirBases = new CalculateAirBases();
 
             _threadSend = new Thread(SendingLoop);
             _threadSend.Start();
@@ -47,7 +52,7 @@ namespace TacticalEditor.Helpers
                 _udpHelper.Send(_listOfAirBases.GetByte(), "255.255.255.255", 20020);
                 _udpHelper.Send(_sendLandingStruct.GetByte(), "255.255.255.255", 20020);
                 _udpHelper.Send(_sendAircraftStruct.GetByte(_aircraftPosition), "255.255.255.255", 20020);
-                _udpHelper.Send(_sendRouteToIup.GetByte(), "255.255.255.255", 20041);
+                _udpHelper.Send(_sendRouteToIup.GetByte(), "192.168.1.56", 30042);
                 Thread.Sleep(20);
             }
         }
@@ -70,6 +75,7 @@ namespace TacticalEditor.Helpers
             {
                 case "Aircraft_Position":
                     ConvertHelper.ByteToObject(receivedBytes, _aircraftPosition);
+                 //   EventsHelper.OnChangeAircraftCoordinateEvent(_aircraftPosition);
                     break;
             }
         }

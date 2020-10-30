@@ -33,7 +33,7 @@ namespace TacticalEditor.Send
         {
             for (int i = 0; i < AirBases.Length; i++)
                 if (AirBases[i] != null)
-                    if (AirBases[i].Guid== e.Guid)
+                    if (AirBases[i].Guid == e.Guid)
                         _activeAirbase = i;
         }
 
@@ -86,9 +86,6 @@ namespace TacticalEditor.Send
                     _measureHelper.GetDegreesAzimuthLatLon(AirBases[i].NavigationPoint.GeoCoordinate.Latitude,
                         AirBases[i].NavigationPoint.GeoCoordinate.Longitude,
                         _aircraft.GeoCoordinate.Latitude, _aircraft.GeoCoordinate.Longitude);
-                _measureHelper.GetDegreesAzimuthLatLon(AirBases[i].NavigationPoint.GeoCoordinate.Latitude,
-                    AirBases[i].NavigationPoint.GeoCoordinate.Longitude,
-                    _aircraft.GeoCoordinate.Latitude, _aircraft.GeoCoordinate.Longitude);
             }
         }
     }
