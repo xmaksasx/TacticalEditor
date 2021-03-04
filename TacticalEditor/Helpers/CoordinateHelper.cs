@@ -158,7 +158,7 @@ namespace TacticalEditor.Helpers
                   Math.PI;
         }
 
-        private void Gp2Linear(double FL0, double FEast, double lat, double lon, out double x, out double y)
+        private void Gp2Linear(double FL0, double FEast, double lat, double lon, out double Z, out double X)
         {
             double b = lat * P157;
             double l = lon * P157;
@@ -183,8 +183,8 @@ namespace TacticalEditor.Helpers
             double b3 = b1 * b2 - a1 * a2;
             double c3 = c1 * d2 + c2 * d1;
             double d3 = d1 * d2 + c1 * c2;
-            y = R * psi + AA2 * a1 * d1 + AA4 * a2 * d2 + AA6 * a3 * d3;
-            x = R * p + AA2 * b1 * c1 + AA4 * b2 * c2 + AA6 * b3 * c3 + FEast;
+            X = R * psi + AA2 * a1 * d1 + AA4 * a2 * d2 + AA6 * a3 * d3;
+            Z = R * p + AA2 * b1 * c1 + AA4 * b2 * c2 + AA6 * b3 * c3 + FEast;
         }
 
         /// <summary>
@@ -226,9 +226,88 @@ namespace TacticalEditor.Helpers
             Z -= Z0;
         }
 
-        #endregion
 
-        public string Grad2GradMinSec(double degree)
+   /*     var Gp2Linear1 = func(FL0, FEast)
+        {
+
+            var lat = getprop("/sim/input/click/latitude-deg");
+        var lon = getprop("/sim/input/click/longitude-deg");
+        var b = lat * P157;
+        var l = lon * P157;
+        l = l - FL0;
+            var sinb = Math.Sin(b);
+        var sin2b = sinb * sinb;
+        var fi = b - ((2624.0 * sin2b + 372834.0) * sin2b + 66934216.0) * sinb * Math.Cos(b) * 1.0E-10;
+        var cosfi = Math.Cos(fi);
+        var thp = cosfi * Math.Sin(l);
+        var psi = Math.Atan(Math.Sin(fi) / (cosfi + 1.0E-20) / (Math.Cos(l) + 1.0E-20));
+        var p = 0.5 * Math.Log((1.0 + thp) / (1.0 - thp));
+        var a1 = Math.Sin(2.0 * psi);
+        var b1 = Math.Cos(2.0 * psi);
+        var tmp = 1.0 / (1.0 - thp * thp);
+        var c1 = 2.0 * thp * tmp;
+        var d1 = (1.0 + thp * thp) * tmp;
+        var a2 = 2.0 * a1 * b1;
+        var b2 = 1.0 - 2.0 * a1 * a1;
+        var c2 = 2.0 * c1 * d1;
+        var d2 = 1.0 + 2.0 * c1 * c1;
+        var a3 = a1 * b2 + a2 * b1;
+        var b3 = b1 * b2 - a1 * a2;
+        var c3 = c1 * d2 + c2 * d1;
+        var d3 = d1 * d2 + c1 * c2;
+        var y = R * psi + AA2 * a1 * d1 + AA4 * a2 * d2 + AA6 * a3 * d3;
+        var x = R * p + AA2 * b1 * c1 + AA4 * b2 * c2 + AA6 * b3 * c3 + FEast;
+        setprop("/GeoCD/Z0", x);
+        setprop("/GeoCD/X0", y);
+    }
+
+    var Gp2Linear2 = func(FL0, FEast)
+        {
+		    var lat = getprop("/sim/input/click/latitude-deg");
+    var lon = getprop("/sim/input/click/longitude-deg");
+    var b = lat * P157;
+    var l = lon * P157;
+    l = l - FL0;
+            var sinb = Math.Sin(b);
+    var sin2b = sinb * sinb;
+    var fi = b - ((2624.0 * sin2b + 372834.0) * sin2b + 66934216.0) * sinb * Math.Cos(b) * 1.0E-10;
+    var cosfi = Math.Cos(fi);
+    var thp = cosfi * Math.Sin(l);
+    var psi = Math.Atan(Math.Sin(fi) / (cosfi + 1.0E-20) / (Math.Cos(l) + 1.0E-20));
+    var p = 0.5 * Math.Log((1.0 + thp) / (1.0 - thp));
+    var a1 = Math.Sin(2.0 * psi);
+    var b1 = Math.Cos(2.0 * psi);
+    var tmp = 1.0 / (1.0 - thp * thp);
+    var c1 = 2.0 * thp * tmp;
+    var d1 = (1.0 + thp * thp) * tmp;
+    var a2 = 2.0 * a1 * b1;
+    var b2 = 1.0 - 2.0 * a1 * a1;
+    var c2 = 2.0 * c1 * d1;
+    var d2 = 1.0 + 2.0 * c1 * c1;
+    var a3 = a1 * b2 + a2 * b1;
+    var b3 = b1 * b2 - a1 * a2;
+    var c3 = c1 * d2 + c2 * d1;
+    var d3 = d1 * d2 + c1 * c2;
+    var y = R * psi + AA2 * a1 * d1 + AA4 * a2 * d2 + AA6 * a3 * d3;
+    var x = R * p + AA2 * b1 * c1 + AA4 * b2 * c2 + AA6 * b3 * c3 + FEast;
+    setprop("/GeoCD/Z1", x);
+    setprop("/GeoCD/X2", y);
+}
+
+var LocalCordToXZ = func(Lat0, Lon0)
+        {
+			var LatT = getprop("/sim/input/click/latitude-deg");
+var LonT = getprop("/sim/input/click/longitude-deg");
+var FL0 = Lon0 * P157;
+var FEast = ((int)(Lon0 / 6) + 1) * 1000000.0 + 5000000.0;
+Gp2Linear1(FL0, FEast, Lat0, Lon0);
+Gp2Linear2(FL0, FEast, LatT, LonT);
+        }
+
+        */
+    #endregion
+
+    public string Grad2GradMinSec(double degree)
         {
 
             var deg = (int) degree;

@@ -3,6 +3,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using TacticalEditor.Helpers;
+using TacticalEditor.Models;
 
 namespace TacticalEditor.VisualObject.VisAirport
 {
@@ -19,11 +20,16 @@ namespace TacticalEditor.VisualObject.VisAirport
             InitializeComponent();
             EventsHelper.ChangeAirportEvent += ChangeAirportEvent;
             EventsHelper.ChangeOfSizeEvent += ChangeOfSize;
+            EventsHelper.ChangeNpDEvent += ChangeNpDEvent;
             _coordinateHelper = new CoordinateHelper();
             _airportPoint = airportPoint;
             PrepareRouteLine(_airportPoint);
             PrepareAirport(_airportPoint);
 
+        }
+
+        private void ChangeNpDEvent(ChangeNp changeNp)
+        {
         }
         private void PrepareRouteLine(AirBasePoint airportPoint)
         {

@@ -73,6 +73,19 @@ namespace TacticalEditor.Helpers
 
         #endregion
 
+        #region Оповещает о смене позиции PPM
+
+        /// <summary>
+        /// Оповещает об изменении навигационной точки
+        /// </summary>
+        /// <param name="changeNp"></param>
+        public delegate void ChangeNpD (ChangeNp changeNp);
+        public static event ChangeNpD ChangeNpDEvent;
+        public static void OnChangeNpDEvent(ChangeNp changeNp) =>
+	        ChangeNpDEvent?.Invoke(changeNp);
+
+        #endregion
+
         #region Оповещает о позиции самолета
 
         /// <summary>
@@ -164,12 +177,12 @@ namespace TacticalEditor.Helpers
         /// Передает состояние режима
         /// </summary>
         /// <param name="e"></param>
-        public delegate void DebugNumber(double e);
+        public delegate void DebugNumber();
         public static event DebugNumber DebugNumberEvent;
 
-        public static void OnDebugNumberEvent(double e)
+        public static void OnDebugNumberEvent()
         {
-            DebugNumberEvent?.Invoke(e);
+            DebugNumberEvent?.Invoke();
         }
 
         #endregion

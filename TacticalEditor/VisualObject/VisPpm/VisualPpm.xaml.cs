@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using TacticalEditor.Helpers;
+using TacticalEditor.Models;
 
 namespace TacticalEditor.VisualObject.VisPpm
 {
@@ -26,7 +27,43 @@ namespace TacticalEditor.VisualObject.VisPpm
             _coordinateHelper = new CoordinateHelper();
             EventsHelper.MenuStatusEvent += StatePpmEvent;
             EventsHelper.ChangeOfSizeEvent += ChangeOfSize;
+			EventsHelper.ChangeNpDEvent += ChangeNpDEvent;
             PrepareRouteLine(ppmPoint);
+            ChangeNpDEvent(new ChangeNp() {Action = 1, TypeOfNp = 2, IdNp = 1});
+        }
+
+		private void ChangeNpDEvent(ChangeNp changeNp)
+		{
+			if (changeNp.TypeOfNp != _ppmPoint.NavigationPoint.Type) return;
+            if (changeNp.Action == 1)
+	            if (changeNp.IdNp == _ppmPoint.NumberInRoute)
+	            {
+		            _ppmPoint.NavigationPoint.Executable = 1;
+		            SetColorActivePpm();
+	            }
+	            else
+	            {
+		            {
+			            _ppmPoint.NavigationPoint.Executable = 0;
+			            SetColorNonActivePpm();
+
+		            }
+                }
+
+	       
+		}
+
+		private void SetColorActivePpm()
+		{
+			Dispatcher.Invoke(() => El.Fill = new SolidColorBrush(Color.FromArgb(35, 35, 75, 255)));
+			Dispatcher.Invoke(() => El.Stroke = new SolidColorBrush(Colors.DarkViolet));
+			Dispatcher.Invoke(() => El.StrokeThickness = 1.5);
+		}
+		private void SetColorNonActivePpm()
+		{
+			Dispatcher.Invoke(() => El.Fill = new SolidColorBrush(Color.FromArgb(35, 155, 155, 155)));
+			Dispatcher.Invoke(() => El.Stroke = new SolidColorBrush(Colors.Black));
+			Dispatcher.Invoke(() => El.StrokeThickness = 0.6);
         }
 
         private void PrepareRouteLine(PpmPoint ppmPoint)
@@ -53,10 +90,12 @@ namespace TacticalEditor.VisualObject.VisPpm
             _ppmPoint.Screen.LineIn.Y2 =  _ppmPoint.Screen.RelativeY * sizeMap;
             _ppmPoint.Screen.LineOut.X1 = _ppmPoint.Screen.RelativeX * sizeMap;
             _ppmPoint.Screen.LineOut.Y1 = _ppmPoint.Screen.RelativeY * sizeMap;
-
+       
             Canvas.SetLeft(this, _ppmPoint.Screen.RelativeX * sizeMap);
             Canvas.SetTop(this, _ppmPoint.Screen.RelativeY * sizeMap);
+
         }
+
 
         private void StatePpmEvent(MenuStates e)
         {
@@ -97,7 +136,10 @@ namespace TacticalEditor.VisualObject.VisPpm
         {
             _isDragging = false;
             ReleaseMouseCapture();
-            El.Stroke = new SolidColorBrush(Colors.Black);
+            if (_ppmPoint.NavigationPoint.Executable == 1)
+	            SetColorActivePpm();
+            else
+	            SetColorNonActivePpm();
         }
     }
 }

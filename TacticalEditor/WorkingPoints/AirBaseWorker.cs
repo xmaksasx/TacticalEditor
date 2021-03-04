@@ -88,7 +88,7 @@ namespace TacticalEditor.WorkingPoints
             airportPoint.Screen.RelativeX = px;
             airportPoint.Screen.RelativeY = py;
 
-            if(airport.name == "Lipetsk")
+            if(airport.name == "Adler")
             {
                 airportPoint.AirportInfo.ActiveAirport = true;
                 airportPoint.NavigationPoint.Measure.Psi = airport.Runway[0].DirectCourse.Threshold.heading;

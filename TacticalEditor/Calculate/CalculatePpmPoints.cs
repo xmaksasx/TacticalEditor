@@ -1,4 +1,5 @@
-﻿using TacticalEditor.Helpers;
+﻿using System;
+using TacticalEditor.Helpers;
 using TacticalEditor.Models;
 using TacticalEditor.VisualObject.VisAirport;
 using TacticalEditor.VisualObject.VisPpm;
@@ -36,18 +37,29 @@ namespace TacticalEditor.Calculate
                 var acG = aircraft.GeoCoordinate;
                 var abpG = _airBasePoint.NavigationPoint;
 
-
                 ppmM.Measure.Distance =
-                    _measureHelper.GetDistanceInKmLatLon(ppmG.GeoCoordinate.Latitude, ppmG.GeoCoordinate.Longitude, acG.Latitude, acG.Longitude);
+                    _measureHelper.GetDistanceInKmLatLon(acG.Latitude, acG.Longitude,ppmG.GeoCoordinate.Latitude, ppmG.GeoCoordinate.Longitude);
 
                 ppmM.Measure.Psi =
-                    _measureHelper.GetDegreesAzimuthLatLon(ppmG.GeoCoordinate.Latitude, ppmG.GeoCoordinate.Longitude, acG.Latitude, acG.Longitude);
+                    _measureHelper.GetDegreesAzimuthLatLon(acG.Latitude, acG.Longitude,ppmG.GeoCoordinate.Latitude, ppmG.GeoCoordinate.Longitude);
 
                 _coordinateHelper.LocalCordToXZ(abpG.GeoCoordinate.Latitude, abpG.GeoCoordinate.Longitude, ppmG.GeoCoordinate.Latitude, ppmG.GeoCoordinate.Longitude,
                     out var x, out var z);
 
                 ppmG.GeoCoordinate.X = x - acG.X; 
                 ppmG.GeoCoordinate.Z = z - acG.Z;
+
+                ppmM.Measure.Distance = Math.Sqrt(Math.Pow(ppmG.GeoCoordinate.X, 2) + Math.Pow(ppmG.GeoCoordinate.Z, 2))/1000;
+
+                if (2000 > Math.Sqrt(ppmG.GeoCoordinate.X* ppmG.GeoCoordinate.X+ ppmG.GeoCoordinate.Z* ppmG.GeoCoordinate.Z))
+                    if (ppmG.Executable==1)
+                        EventsHelper.OnChangeNpDEvent(new ChangeNp(){Action = 1, TypeOfNp = 2, IdNp = i + 2 });
+	
+                if (i==0)
+                {
+                    DebugParameters.XPPM = ppmG.GeoCoordinate.X;
+                    DebugParameters.ZPPM = ppmG.GeoCoordinate.Z;
+                }
             }
 
         }

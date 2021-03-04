@@ -31,6 +31,15 @@ namespace TacticalEditor.WorkingPoints
             _activeAirbase = e;
         }
 
+        public void Get()
+        {
+	        var sizeMap = _sizeMap;
+	        _coordinateHelper.PixelToLatLon(new Point(_ppmPoints[0].Screen.RelativeX * sizeMap, _ppmPoints[0].Screen.RelativeY * sizeMap),
+		        sizeMap, out var lat, out var lon);
+
+	        MessageBox.Show("Lat = " + lat + "   Lot = " + lon);
+        }
+
         private void OutLineFromLastPointEvent(Line outline)
         {
             _inLine = outline;

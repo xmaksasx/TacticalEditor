@@ -19,6 +19,7 @@ namespace TacticalEditor.Helpers
         private SendRouteToIup _sendRouteToIup;
         private CalculatePpmPoints _calculatePpmPoints;
         private CalculateAirBases _calculateAirBases;
+        private ChangeNp _changeNp;
         private bool IsLooping;
 
         public ProcessingLoop()
@@ -35,7 +36,7 @@ namespace TacticalEditor.Helpers
             _sendRouteToIup = new SendRouteToIup();
             _calculatePpmPoints = new CalculatePpmPoints();
             _calculateAirBases = new CalculateAirBases();
-
+            _changeNp = new ChangeNp();
             _threadSend = new Thread(SendingLoop);
             _threadSend.Start();
             _threadReceive = new Thread(ReceivingLoop);
@@ -47,13 +48,14 @@ namespace TacticalEditor.Helpers
         {
             while (IsLooping)
             {
-
                 _udpHelper.Send(_listOfNavigationPoint.GetByte(), "255.255.255.255", 20041);
                 _udpHelper.Send(_listOfAirBases.GetByte(), "255.255.255.255", 20020);
                 _udpHelper.Send(_sendLandingStruct.GetByte(), "255.255.255.255", 20020);
                 _udpHelper.Send(_sendAircraftStruct.GetByte(_aircraftPosition), "255.255.255.255", 20020);
-                _udpHelper.Send(_sendRouteToIup.GetByte(), "192.168.1.56", 30042);
+                _udpHelper.Send(_sendRouteToIup.GetByteNp(), "192.168.1.56", 30042);
+                _udpHelper.Send(_sendRouteToIup.GetByteAirports(), "192.168.1.56", 30043);
                 Thread.Sleep(20);
+                EventsHelper.OnDebugNumberEvent();
             }
         }
 
@@ -71,14 +73,25 @@ namespace TacticalEditor.Helpers
 
         private void ProcessingPackage(string header, byte[] receivedBytes)
         {
-            switch (header)
-            {
-                case "Aircraft_Position":
-                    ConvertHelper.ByteToObject(receivedBytes, _aircraftPosition);
-                 //   EventsHelper.OnChangeAircraftCoordinateEvent(_aircraftPosition);
-                    break;
-            }
+	        switch (header)
+	        {
+		        case "Aircraft_Position":
+			        ConvertHelper.ByteToObject(receivedBytes, _aircraftPosition);
+			        break;
+		        case "Reset_Position":
+			        _aircraftPosition.GeoCoordinate.X = 0;
+			        _aircraftPosition.GeoCoordinate.Z = 0;
+			        _aircraftPosition.GeoCoordinate.H = 0;
+			        break;
+		        case "ChangeRoute":
+			        for (int i = 68; i < receivedBytes.Length; i += 8)
+				        Array.Reverse(receivedBytes, i, 8);
+			        ConvertHelper.ByteToObject(receivedBytes, _changeNp);
+                    EventsHelper.OnChangeNpDEvent(_changeNp);
+			        break;
+	        }
         }
+
 
         public void Destroy()
         {

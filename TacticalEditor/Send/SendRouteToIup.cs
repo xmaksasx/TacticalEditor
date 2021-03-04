@@ -42,7 +42,6 @@ namespace TacticalEditor.Send
             airport.Runway = airbase.AirportInfo.Runway;
         }
 
-
         private void PpmCollection(PpmPoint[] ppmPoints)
         {
             _routeToIup.CountPoints = 0;
@@ -58,13 +57,12 @@ namespace TacticalEditor.Send
 
         List<byte> result = new List<byte>();
 
-        public byte[] GetByte()
+        public byte[] GetByteNp()
         {
             result.Clear();
             result.AddRange(_routeToIup.Head);
             result.AddRange(BitConverter.GetBytes(_routeToIup.CountPoints));
-            _routeToIup.DepartureAirport.Runway = _airBasePoint.AirportInfo.Runway;
-            result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.DepartureAirport));
+          
 
             foreach (var rnp in _routeToIup.NavigationPoints)
             {
@@ -79,11 +77,27 @@ namespace TacticalEditor.Send
                     result.AddRange(ConvertHelper.ObjectToByte(np));
                 }
             }
+            byte[] bytes = result.ToArray();
 
+            for (int i = 68; i < bytes.Length; i += 8)
+                Array.Reverse(bytes, i, 8);
+            return bytes;
+        }
+
+        public byte[] GetByteAirports()
+        {
+            result.Clear();
+            result.AddRange(new byte[]
+            {
+          
+                65, 105, 114, 112, 111, 114, 116, 115, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                65, 105, 114, 112, 111, 114, 116, 115, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 16
+            });
+            _routeToIup.DepartureAirport.Runway = _airBasePoint.AirportInfo.Runway;
             _routeToIup.ArrivalAirport.Runway = _airBasePoint.AirportInfo.Runway;
-            result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.ArrivalAirport));
-
-
+            result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.DepartureAirport));
+       //     result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.ArrivalAirport));
             byte[] bytes = result.ToArray();// ConvertHelper.ObjectToByte(_routeToIup);
 
             for (int i = 68; i < bytes.Length; i += 8)
@@ -113,6 +127,8 @@ namespace TacticalEditor.Send
             return bytes;
         }
     }
+
+
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     class RouteToIup : Header

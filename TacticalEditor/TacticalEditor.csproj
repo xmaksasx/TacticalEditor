@@ -84,6 +84,8 @@
     <Compile Include="Helpers\UdpHelper.cs" />
     <Compile Include="Helpers\VisualObjectHelper.cs" />
     <Compile Include="Models\AircraftPosition.cs" />
+    <Compile Include="Models\ChangeNp.cs" />
+    <Compile Include="Models\DebugParameters.cs" />
     <Compile Include="Models\Landing.cs" />
     <Compile Include="Models\MieaPacket.cs" />
     <Compile Include="Send\ListOfAirBases.cs" />

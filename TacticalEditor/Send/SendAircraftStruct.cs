@@ -39,6 +39,14 @@ namespace TacticalEditor.Send
             _aircraft.GeoCoordinate.Longitude = lon;
             _aircraft.GeoCoordinate.X = aircraft.GeoCoordinate.X;
             _aircraft.GeoCoordinate.Z = aircraft.GeoCoordinate.Z;
+            _aircraft.GeoCoordinate.H = aircraft.GeoCoordinate.H;
+
+
+            DebugParameters.LatLA = lat;
+            DebugParameters.LonLA = lon;
+            DebugParameters.HLA = _aircraft.HLand;
+            DebugParameters.PsiLA = _aircraft.Risk;
+            DebugParameters.HbarLA = _aircraft.GeoCoordinate.H- _aircraft.HLand;
 
             EventsHelper.OnChangeAircraftCoordinateEvent(_aircraft);
 

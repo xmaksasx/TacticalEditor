@@ -49,14 +49,11 @@ namespace TacticalEditor.Helpers
             return  (Math.Atan(a / b) * 180 / Math.PI)*-1;
         }
 
-
-       
-
         public double IndicatorGs(double hBarLa, double hRwy, double distanceGs)
         {
             int hGs = 15; //Высота маяка 15м
             var a = (hBarLa - hRwy - hGs) / distanceGs;
-            return (3 - Math.Atan(a) * 180 / Math.PI)*-1;
+            return (3 - Math.Atan(a) * 180 / Math.PI) * -1;
         }
 
         public bool IndicatorLocIsVisible(double distanceLoc, double yLa, double hRwy, double indicatorLoc)

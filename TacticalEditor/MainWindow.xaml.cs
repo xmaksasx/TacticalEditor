@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TacticalEditor.Helpers;
@@ -34,14 +35,23 @@ namespace TacticalEditor
             _coordinateHelper = new CoordinateHelper();
             _measureHelper = new MeasureHelper();
 
-            EventsHelper.DebugNumberEvent += EventsHelperOnDebugNumberEvent;
+            EventsHelper.DebugNumberEvent += Debug;
             ScrollViewer.ScrollToVerticalOffset(2300);
             ScrollViewer.ScrollToHorizontalOffset(4130);
         }
 
-        private void EventsHelperOnDebugNumberEvent(double e)
+        private void Debug()
         {
-          Dispatcher.Invoke(()=> Psi.Content = e);
+            //Dispatcher.Invoke(() => LatLA.Text = Math.Round(DebugParameters.LatLA ,5).ToString());
+            //Dispatcher.Invoke(() => LonLA.Text = Math.Round(DebugParameters.LonLA, 5).ToString());
+            //Dispatcher.Invoke(() => PsiLA.Text = Math.Round(DebugParameters.PsiLA, 5).ToString());
+            //Dispatcher.Invoke(() => HLA.Text = Math.Round(DebugParameters.HLA, 5).ToString());
+            //Dispatcher.Invoke(() => HbarLA.Text = Math.Round(DebugParameters.HbarLA, 5).ToString());
+            //Dispatcher.Invoke(() => Gs.Text = Math.Round(DebugParameters.Gs, 5).ToString());
+            //Dispatcher.Invoke(() => Loc.Text = Math.Round(DebugParameters.Loc, 5).ToString());
+
+            //Dispatcher.Invoke(() => Xppm.Text = Math.Round(DebugParameters.XPPM, 5).ToString());
+            //Dispatcher.Invoke(() => Zppm.Text = Math.Round(DebugParameters.ZPPM, 5).ToString());
         }
 
         private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -125,6 +135,16 @@ namespace TacticalEditor
         private void RouteCube_OnClick(object sender, RoutedEventArgs e)
         {
             _visualObjectHelper.AddDebugPm();
+        }
+
+        private void RouteBox_OnClick(object sender, RoutedEventArgs e)
+        {
+            _visualObjectHelper.BuildBox();
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+	        _visualObjectHelper.get();
         }
     }
 

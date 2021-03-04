@@ -20,6 +20,7 @@ namespace TacticalEditor.Helpers
         private AirBaseWorker _airBaseWorker;
         private RoutePoints _routePoints;
         private AirBasePoint _currentAirport;
+        private MeasureHelper _measureHelper;
         private double _lX =0;
         private double _lY = 0;
 
@@ -33,6 +34,7 @@ namespace TacticalEditor.Helpers
             _coordinateHelper = new CoordinateHelper();
             _ppmWorker = new PpmWorker();
             _airBaseWorker = new AirBaseWorker();
+            _measureHelper = new MeasureHelper();
             AddVisualAirBase();
             AddVisualAircraft();
 
@@ -76,21 +78,51 @@ namespace TacticalEditor.Helpers
             AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
         }
 
+        public void get()
+        {
+	       _ppmWorker.Get();
+
+        }
 
         public void BuildBox()
         {
             Point point;
             var sizeMap = (uint)_plotter.Height;
-            _coordinateHelper.LocalCordToLatLon(_currentAirport.NavigationPoint.GeoCoordinate.Latitude, _currentAirport.NavigationPoint.GeoCoordinate.Longitude, -7100 * 1, 7100 * 1, out var LatT, out var LonT);
-
-            GetLatLonOfPoint(_currentAirport.NavigationPoint.GeoCoordinate.Latitude,
-                _currentAirport.NavigationPoint.GeoCoordinate.Longitude, 20000, 160, out double latLocator,
-                out double lonLocator);
-
-            _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out var PX, out var PY);
+        
+            GetLatLonOfPoint(_currentAirport.NavigationPoint.GeoCoordinate.Latitude, _currentAirport.NavigationPoint.GeoCoordinate.Longitude, 6000, _currentAirport.AirportInfo.Runway.Heading, out double latLocator, out double lonLocator);
+            _coordinateHelper.LatLonToPixel(latLocator, lonLocator, sizeMap, out var PX, out var PY);
             point = new Point(PX, PY);
             _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
             AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+       
+            GetLatLonOfPoint(latLocator, lonLocator, 12500, _currentAirport.AirportInfo.Runway.Heading-90, out  latLocator, out lonLocator);
+            _coordinateHelper.LatLonToPixel(latLocator, lonLocator, sizeMap, out  PX, out  PY);
+            point = new Point(PX, PY);
+            _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+            AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+            GetLatLonOfPoint(latLocator, lonLocator, 28000, _currentAirport.AirportInfo.Runway.Heading - 180, out latLocator, out lonLocator);
+            _coordinateHelper.LatLonToPixel(latLocator, lonLocator, sizeMap, out PX, out PY);
+            point = new Point(PX, PY);
+            _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+            AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+            GetLatLonOfPoint(latLocator, lonLocator, 12500, _currentAirport.AirportInfo.Runway.Heading - 270, out latLocator, out lonLocator);
+            _coordinateHelper.LocalCordToXZ(_currentAirport.NavigationPoint.GeoCoordinate.Latitude,
+                _currentAirport.NavigationPoint.GeoCoordinate.Longitude,
+                latLocator,
+                lonLocator,
+                out var x1,
+                out var x2
+                );
+            _coordinateHelper.LatLonToPixel(latLocator, lonLocator, sizeMap, out PX, out PY);
+            point = new Point(PX, PY);
+            _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
+            AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
+
+
+
 
         }
 
@@ -105,25 +137,25 @@ namespace TacticalEditor.Helpers
             Point point;
             var sizeMap = (uint)_plotter.Height;
 
-               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, -7100 * 1, 7100*1, out var LatT, out var LonT);
+               _coordinateHelper.LocalCordToLatLon(43.439489, 39.925886, -7100 * 1, 7100*1, out var LatT, out var LonT);
                _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out var PX, out var PY);
                point = new Point(PX, PY);
                _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
                AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
 
-               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, -7100 * 2, 7100 * 2, out  LatT, out  LonT);
+               _coordinateHelper.LocalCordToLatLon(43.439489, 39.925886, -7100 * 2, 7100 * 2, out  LatT, out  LonT);
                _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out  PX, out  PY);
                point = new Point(PX, PY);
                _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
                AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
 
-               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, -7100 * 4, 7100 * 4, out LatT, out LonT);
+               _coordinateHelper.LocalCordToLatLon(43.439489, 39.925886, -7100 * 4, 7100 * 4, out LatT, out LonT);
                _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out PX, out PY);
                point = new Point(PX, PY);
                _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
                AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
 
-               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, -7100 * 8, 7100 * 8, out LatT, out LonT);
+               _coordinateHelper.LocalCordToLatLon(43.439489, 39.925886, -7100 * 8, 7100 * 8, out LatT, out LonT);
                _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out PX, out PY);
                point = new Point(PX, PY);
                _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
@@ -132,25 +164,25 @@ namespace TacticalEditor.Helpers
 
 
 
-               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, 7100 * 8, 7100 * 8, out LatT, out LonT);
+               _coordinateHelper.LocalCordToLatLon(43.439489, 39.925886, 7100 * 8, 7100 * 8, out LatT, out LonT);
                _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out PX, out PY);
                point = new Point(PX, PY);
                _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
                AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
 
-               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, 7100 * 4, 7100 * 4, out LatT, out LonT);
+               _coordinateHelper.LocalCordToLatLon(43.439489, 39.925886, 7100 * 4, 7100 * 4, out LatT, out LonT);
                _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out PX, out PY);
                point = new Point(PX, PY);
                _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
                AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
 
-               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, 7100 * 2, 7100 * 2, out LatT, out LonT);
+               _coordinateHelper.LocalCordToLatLon(43.439489, 39.925886, 7100 * 2, 7100 * 2, out LatT, out LonT);
                _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out PX, out PY);
                point = new Point(PX, PY);
                _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
                AddVisualToPlotter(_ppmWorker.CrateVisualPpm(point), point);
 
-               _coordinateHelper.LocalCordToLatLon(52.6618694, 39.4261806, 7100 * 1, 7100 * 1, out  LatT, out  LonT);
+               _coordinateHelper.LocalCordToLatLon(43.439489, 39.925886, 7100 * 1, 7100 * 1, out  LatT, out  LonT);
                _coordinateHelper.LatLonToPixel(LatT, LonT, sizeMap, out  PX, out  PY);
                point = new Point(PX, PY);
                _routePoints.PPM.Add(new Ppm { RelativeX = point.X / sizeMap, RelativeY = point.Y / sizeMap });
@@ -177,6 +209,7 @@ namespace TacticalEditor.Helpers
 
         public void Clear()
         {
+	        _routePoints.PPM.Clear();
             _ppmWorker.Clear();
             for (int i = _plotter.Children.Count - 1; i >= 0; i--)
             {
