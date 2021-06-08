@@ -55,7 +55,7 @@ namespace TacticalEditor.Send
 	
 
 			var dgram = GetByteNp();
-			_sendClient?.Send(dgram, dgram.Length, "127.0.0.1", 20555);
+			_sendClient?.Send(dgram, dgram.Length, "127.0.0.1", 20020);
 		}
 
 		List<byte> result = new List<byte>();
@@ -66,25 +66,13 @@ namespace TacticalEditor.Send
 			result.AddRange(_routeToIup.Head);
 			result.AddRange(BitConverter.GetBytes(_routeToIup.CountPoints));
 			result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.DepartureAerodrome));
-
 			foreach (var rnp in _routeToIup.NavigationPoints)
 			{
-				if (rnp == null)
-				{
-					var np = PrepareNavigationPoint(new NavigationPoint {Type = -1});
-					result.AddRange(ConvertHelper.ObjectToByte(np));
-				}
-				else
-				{
-					var np = PrepareNavigationPoint(rnp);
-					result.AddRange(ConvertHelper.ObjectToByte(np));
-				}
+				var np = PrepareNavigationPoint(rnp);
+				result.AddRange(ConvertHelper.ObjectToByte(np));
 			}
 			result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.ArrivalAerodrome));
-
 			byte[] bytes = result.ToArray();
-
-			
 			return bytes;
 		}
 

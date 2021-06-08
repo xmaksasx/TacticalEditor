@@ -133,10 +133,25 @@ namespace TacticalEditor.Send
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     class RouteToIup : Header
     {
+	    public RouteToIup()
+	    {
+		    long start_mem = GC.GetTotalMemory(true);
+
+		
+		  
+            NavigationPoints = new NavigationPoint[20]; 
+            double used_mem_median = (GC.GetTotalMemory(false) - start_mem);
+            for (int i = 0; i < 20; i++)
+		    {
+			    NavigationPoints[i] = new NavigationPoint(){Type = -1};
+
+            }
+	  }
         public double CountPoints;
         public Aerodrome DepartureAerodrome = new Aerodrome();
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        public NavigationPoint[] NavigationPoints = new NavigationPoint[20];
+        public NavigationPoint[] NavigationPoints;
         public Aerodrome ArrivalAerodrome = new Aerodrome();
     }
 

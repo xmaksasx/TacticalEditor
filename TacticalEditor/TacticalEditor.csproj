@@ -91,12 +91,11 @@
     <Compile Include="Models\Landing.cs" />
     <Compile Include="Models\MieaPacket.cs" />
     <Compile Include="Models\Route.cs" />
-    <Compile Include="Send\ListOfAirBases.cs" />
-    <Compile Include="Send\ListOfNavigationPoint.cs" />
     <Compile Include="Send\SendAircraftStruct.cs" />
     <Compile Include="Send\SendLandingStruct.cs" />
     <Compile Include="Send\SendRouteToIup.cs" />
     <Compile Include="Send\SendToSvvo.cs" />
+    <Compile Include="Send\SenToDataTransfer.cs" />
     <Compile Include="VisualObject\VisAerodrome\AerodromeInfo.cs" />
     <Compile Include="VisualObject\VisAerodrome\RunwayInfo.cs" />
     <Compile Include="Models\NavPoint\NavigationPoint.cs" />

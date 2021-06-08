@@ -5,7 +5,6 @@ namespace TacticalEditor.Helpers
     class LandingHelper
     {
         private MeasureHelper _measureHelper;
-
         public LandingHelper()
         {
             _measureHelper = new MeasureHelper();
