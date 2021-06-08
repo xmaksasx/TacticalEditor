@@ -1,5 +1,4 @@
-﻿using TacticalEditor.Models;
-using TacticalEditor.Models.NavPoint;
+﻿using TacticalEditor.Models.NavPoint;
 
 namespace TacticalEditor.VisualObject.VisAircraft
 {

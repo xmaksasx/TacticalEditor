@@ -14,6 +14,7 @@ namespace TacticalEditor.VisualObject.VisPpm
     /// </summary>
     public partial class VisualPpm
     {
+	    private RouteHelper _routeHelper;
         private PpmPoint _ppmPoint;
         private CoordinateHelper _coordinateHelper;
         private bool _isDragging;
@@ -25,6 +26,8 @@ namespace TacticalEditor.VisualObject.VisPpm
             _ppmPoint = ppmPoint;
             NumberInRoute.Text = _ppmPoint.NumberInRoute.ToString();
             _coordinateHelper = new CoordinateHelper();
+            _routeHelper = RouteHelper.GetInstance();
+            _routeHelper.AddNavigationPoint(_ppmPoint.NavigationPoint);
             EventsHelper.MenuStatusEvent += StatePpmEvent;
             EventsHelper.ChangeOfSizeEvent += ChangeOfSize;
 			EventsHelper.ChangeNpDEvent += ChangeNpDEvent;
@@ -32,70 +35,80 @@ namespace TacticalEditor.VisualObject.VisPpm
             ChangeNpDEvent(new ChangeNp() {Action = 1, TypeOfNp = 2, IdNp = 1});
         }
 
-		private void ChangeNpDEvent(ChangeNp changeNp)
+        private void ChangeNpDEvent(ChangeNp changeNp)
+        {
+	        if (changeNp.TypeOfNp != _ppmPoint.NavigationPoint.Type)
+	        {
+		        SetColorNonActivePpm();
+		        return;
+	        }
+            
+	        if (changeNp.Action == 1)
+		        if (changeNp.IdNp == _ppmPoint.NumberInRoute)
+			        SetColorActivePpm();
+		        else
+			        SetColorNonActivePpm();
+        }
+
+        private void SetColorActivePpm()
 		{
-			if (changeNp.TypeOfNp != _ppmPoint.NavigationPoint.Type) return;
-            if (changeNp.Action == 1)
-	            if (changeNp.IdNp == _ppmPoint.NumberInRoute)
-	            {
-		            _ppmPoint.NavigationPoint.Executable = 1;
-		            SetColorActivePpm();
-	            }
-	            else
-	            {
-		            {
-			            _ppmPoint.NavigationPoint.Executable = 0;
-			            SetColorNonActivePpm();
-
-		            }
-                }
-
-	       
-		}
-
-		private void SetColorActivePpm()
-		{
-			Dispatcher.Invoke(() => El.Fill = new SolidColorBrush(Color.FromArgb(35, 35, 75, 255)));
+			_ppmPoint.NavigationPoint.Executable = 1;
+            Dispatcher.Invoke(() => El.Fill = new SolidColorBrush(Color.FromArgb(35, 35, 75, 255)));
 			Dispatcher.Invoke(() => El.Stroke = new SolidColorBrush(Colors.DarkViolet));
 			Dispatcher.Invoke(() => El.StrokeThickness = 1.5);
 		}
+
 		private void SetColorNonActivePpm()
 		{
-			Dispatcher.Invoke(() => El.Fill = new SolidColorBrush(Color.FromArgb(35, 155, 155, 155)));
+			_ppmPoint.NavigationPoint.Executable = 0;
+            Dispatcher.Invoke(() => El.Fill = new SolidColorBrush(Color.FromArgb(35, 155, 155, 155)));
 			Dispatcher.Invoke(() => El.Stroke = new SolidColorBrush(Colors.Black));
 			Dispatcher.Invoke(() => El.StrokeThickness = 0.6);
         }
 
-        private void PrepareRouteLine(PpmPoint ppmPoint)
-        {
-            _ppmPoint.Screen.LineIn.X2 = ppmPoint.Screen.RelativeX * ppmPoint.Screen.SizeMap;
-            _ppmPoint.Screen.LineIn.Y2 = ppmPoint.Screen.RelativeY * ppmPoint.Screen.SizeMap;
-            _ppmPoint.Screen.LineIn.Stroke = Brushes.Black;
-            _ppmPoint.Screen.LineIn.StrokeThickness = 1;
-            _ppmPoint.Screen.LineOut = new Line();
-            _ppmPoint.Screen.LineOut.X1 = ppmPoint.Screen.RelativeX * ppmPoint.Screen.SizeMap;
-            _ppmPoint.Screen.LineOut.Y1 = ppmPoint.Screen.RelativeY * ppmPoint.Screen.SizeMap;
-            _ppmPoint.Screen.LineOut.Stroke = Brushes.Black;
-            _ppmPoint.Screen.LineOut.StrokeThickness = 1;
+		private void PrepareRouteLine(PpmPoint ppmPoint)
+		{
+			UpdateStartOfLine(_ppmPoint.Screen.LineIn);
+			_ppmPoint.Screen.LineOut = new Line();
+			UpdateEndOfLine(_ppmPoint.Screen.LineOut);
+			EventsHelper.OnAddVisualLine(ppmPoint.Screen.LineIn);
+			EventsHelper.OnOutLineFromLastPoint(_ppmPoint.Screen.LineOut);
+		}
 
-            EventsHelper.OnAddVisualLine(ppmPoint.Screen.LineIn);
-            EventsHelper.OnOutLineFromLastPoint(_ppmPoint.Screen.LineOut);
+		private Point GetXy()
+		{
+			var lat = _ppmPoint.NavigationPoint.GeoCoordinate.Latitude;
+			var lon = _ppmPoint.NavigationPoint.GeoCoordinate.Longitude;
+			_coordinateHelper.LatLonToPixel(lat, lon, out var px, out var py);
+			return new Point(px, py);
+		}
+
+		private void UpdateStartOfLine(Line line)
+        {
+	       var p = GetXy();
+           line.X2 = p.X;
+	       line.Y2 = p.Y;
+	       line.Stroke = Brushes.Black;
+	       line.StrokeThickness = 1;
         }
 
-        private void ChangeOfSize(uint sizeMap)
+		private void UpdateEndOfLine(Line line)
+		{
+			var p = GetXy();
+			line.X1 = p.X;
+			line.Y1 = p.Y;
+			line.Stroke = Brushes.Black;
+			line.StrokeThickness = 1;
+		}
+
+        private void ChangeOfSize()
         {
-            _ppmPoint.Screen.SizeMap = sizeMap;
-
-            _ppmPoint.Screen.LineIn.X2 =  _ppmPoint.Screen.RelativeX * sizeMap;
-            _ppmPoint.Screen.LineIn.Y2 =  _ppmPoint.Screen.RelativeY * sizeMap;
-            _ppmPoint.Screen.LineOut.X1 = _ppmPoint.Screen.RelativeX * sizeMap;
-            _ppmPoint.Screen.LineOut.Y1 = _ppmPoint.Screen.RelativeY * sizeMap;
-       
-            Canvas.SetLeft(this, _ppmPoint.Screen.RelativeX * sizeMap);
-            Canvas.SetTop(this, _ppmPoint.Screen.RelativeY * sizeMap);
-
+	        var p = GetXy();
+	        UpdateStartOfLine(_ppmPoint.Screen.LineIn);
+	        UpdateEndOfLine(_ppmPoint.Screen.LineOut);
+            Canvas.SetLeft(this, p.X);
+            Canvas.SetTop(this, p.Y);
         }
-
 
         private void StatePpmEvent(MenuStates e)
         {
@@ -116,18 +129,13 @@ namespace TacticalEditor.VisualObject.VisPpm
         {
             if (!_isDragging) return;
             var point = e.GetPosition(Parent as UIElement);
-            _coordinateHelper.PixelToLatLon(point, _ppmPoint.Screen.SizeMap, out var lat, out var lon);
+            _coordinateHelper.PixelToLatLon(point, out var lat, out var lon);
             _ppmPoint.NavigationPoint.GeoCoordinate.Latitude = lat;
             _ppmPoint.NavigationPoint.GeoCoordinate.Longitude = lon;
-            _ppmPoint.Screen.RelativeX = point.X / _ppmPoint.Screen.SizeMap;
-            _ppmPoint.Screen.RelativeY = point.Y / _ppmPoint.Screen.SizeMap;
-
             _ppmPoint.Screen.LineIn.X2 = point.X;
             _ppmPoint.Screen.LineIn.Y2 = point.Y;
-
             _ppmPoint.Screen.LineOut.X1 = point.X;
             _ppmPoint.Screen.LineOut.Y1 = point.Y;
-
             Canvas.SetLeft(this, point.X);
             Canvas.SetTop(this, point.Y);
         }
@@ -141,5 +149,11 @@ namespace TacticalEditor.VisualObject.VisPpm
             else
 	            SetColorNonActivePpm();
         }
-    }
+
+		private void UserControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			EventsHelper.OnChangeNpDEvent(new ChangeNp() { Action = 1, TypeOfNp = 2, IdNp = _ppmPoint.NumberInRoute });
+        }
+	}
+   
 }

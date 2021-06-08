@@ -74,13 +74,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Calculate\CalculateAirBases.cs" />
+    <Compile Include="Calculate\CalculateAerodromes.cs" />
     <Compile Include="Calculate\CalculatePpmPoints.cs" />
     <Compile Include="Helpers\ConvertHelper.cs" />
     <Compile Include="Helpers\EventsHelper.cs" />
     <Compile Include="Helpers\LandingHelper.cs" />
     <Compile Include="Helpers\MeasureHelper.cs" />
     <Compile Include="Helpers\ProcessingLoop.cs" />
+    <Compile Include="Helpers\RouteHelper.cs" />
+    <Compile Include="Helpers\ShapeHelper.cs" />
     <Compile Include="Helpers\UdpHelper.cs" />
     <Compile Include="Helpers\VisualObjectHelper.cs" />
     <Compile Include="Models\AircraftPosition.cs" />
@@ -88,13 +90,15 @@
     <Compile Include="Models\DebugParameters.cs" />
     <Compile Include="Models\Landing.cs" />
     <Compile Include="Models\MieaPacket.cs" />
+    <Compile Include="Models\Route.cs" />
     <Compile Include="Send\ListOfAirBases.cs" />
     <Compile Include="Send\ListOfNavigationPoint.cs" />
     <Compile Include="Send\SendAircraftStruct.cs" />
     <Compile Include="Send\SendLandingStruct.cs" />
     <Compile Include="Send\SendRouteToIup.cs" />
-    <Compile Include="VisualObject\VisAirport\AirBaseInfo.cs" />
-    <Compile Include="VisualObject\VisAirport\RunwayInfo.cs" />
+    <Compile Include="Send\SendToSvvo.cs" />
+    <Compile Include="VisualObject\VisAerodrome\AerodromeInfo.cs" />
+    <Compile Include="VisualObject\VisAerodrome\RunwayInfo.cs" />
     <Compile Include="Models\NavPoint\NavigationPoint.cs" />
     <Compile Include="Models\NavPoint\Measure.cs" />
     <Compile Include="Models\Header.cs" />
@@ -103,18 +107,18 @@
     <Compile Include="VisualObject\VisAircraft\VisualAircraft.xaml.cs">
       <DependentUpon>VisualAircraft.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VisualObject\VisAirport\AirBasePoint.cs" />
+    <Compile Include="VisualObject\VisAerodrome\AerodromePoint.cs" />
     <Compile Include="Models\NavPoint\GeoCoordinate.cs" />
     <Compile Include="VisualObject\VisPpm\PpmPoint.cs" />
-    <Compile Include="ModelsXml\RoutePoints.cs" />
-    <Compile Include="Models\ScreenCoordinate.cs" />
-    <Compile Include="VisualObject\VisAirport\VisualAirBase.xaml.cs">
-      <DependentUpon>VisualAirBase.xaml</DependentUpon>
+    <Compile Include="Models\NavPoint\ScreenCoordinate.cs" />
+    <Compile Include="VisualObject\VisAerodrome\VisualAerodrome.xaml.cs">
+      <DependentUpon>VisualAerodrome.xaml</DependentUpon>
     </Compile>
     <Compile Include="VisualObject\VisPpm\VisualPpm.xaml.cs">
       <DependentUpon>VisualPpm.xaml</DependentUpon>
     </Compile>
     <Compile Include="WorkingPoints\AirBaseWorker.cs" />
+    <Compile Include="WorkingPoints\AircraftWorker.cs" />
     <Compile Include="WorkingPoints\PpmWorker.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -134,7 +138,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VisualObject\VisAirport\VisualAirBase.xaml">
+    <Page Include="VisualObject\VisAerodrome\VisualAerodrome.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

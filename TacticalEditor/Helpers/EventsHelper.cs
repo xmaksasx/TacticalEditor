@@ -1,7 +1,6 @@
 ﻿using System.Windows.Shapes;
 using TacticalEditor.Models;
-using TacticalEditor.Models.NavPoint;
-using TacticalEditor.VisualObject.VisAirport;
+using TacticalEditor.VisualObject.VisAerodrome;
 using TacticalEditor.VisualObject.VisPpm;
 
 namespace TacticalEditor.Helpers
@@ -13,20 +12,19 @@ namespace TacticalEditor.Helpers
         /// Смена аэропорта
         /// </summary>
         /// <param name="e"></param>
-        public delegate void ChangeAirport(AirBasePoint e); 
-        public static event ChangeAirport ChangeAirportEvent;
+        public delegate void ChangeAerodrome(AerodromePoint e); 
+        public static event ChangeAerodrome ChangeAerodromeEvent;
 
-        public static void OnChangeAirportEvent(AirBasePoint e) =>
-            ChangeAirportEvent?.Invoke(e);
+        public static void OnChangeAerodromeEvent(AerodromePoint e) =>
+            ChangeAerodromeEvent?.Invoke(e);
 
         #endregion
 
         #region Передает линию для отрисовки маршрута
-      
+
         /// <summary>
-        /// Передает линию для отрисовки маршрута
+        /// Передает линию для маршрута
         /// </summary>
-        /// <param name="e"></param>
         public delegate void AddVisualLine(Line visualLine);
         public static event AddVisualLine AddVisualLineEvent;
         public static void OnAddVisualLine(Line visualLine) =>
@@ -39,24 +37,22 @@ namespace TacticalEditor.Helpers
         /// <summary>
         /// Передает линию выходящую из последней точки
         /// </summary>
-        /// <param name="e"></param>
         public delegate void OutLineFromLastPoint(Line outLine);
         public static event OutLineFromLastPoint OutLineFromLastPointEvent;
-        public static void OnOutLineFromLastPoint(Line outLinee) =>
-            OutLineFromLastPointEvent?.Invoke(outLinee);
+        public static void OnOutLineFromLastPoint(Line outLine) =>
+            OutLineFromLastPointEvent?.Invoke(outLine);
 
         #endregion
 
         #region Оповещает о смене размера карты
 
         /// <summary>
-        /// Передает линию для отрисовки маршрута
+        /// Оповещает о смене размера карты
         /// </summary>
-        /// <param name="e"></param>
-        public delegate void ChangeOfSize(uint sizeMap);
+        public delegate void ChangeOfSize();
         public static event ChangeOfSize ChangeOfSizeEvent;
-        public static void OnChangeOfSizeEvent(uint sizeMap) =>
-            ChangeOfSizeEvent?.Invoke(sizeMap);
+        public static void OnChangeOfSizeEvent() =>
+            ChangeOfSizeEvent?.Invoke();
 
         #endregion
 
@@ -65,7 +61,6 @@ namespace TacticalEditor.Helpers
         /// <summary>
         /// Оповещает о смене позиции PPM
         /// </summary>
-        /// <param name="e"></param>
         public delegate void ChangePpmCoordinate(uint sizeMap);
         public static event ChangePpmCoordinate ChangePpmCoordinateEvent;
         public static void OnChangePpmCoordinateEvent(uint sizeMap) =>
@@ -73,7 +68,7 @@ namespace TacticalEditor.Helpers
 
         #endregion
 
-        #region Оповещает о смене позиции PPM
+        #region Оповещает об изменении навигационной точки
 
         /// <summary>
         /// Оповещает об изменении навигационной точки
@@ -91,7 +86,6 @@ namespace TacticalEditor.Helpers
         /// <summary>
         /// Оповещает о позиции самолета
         /// </summary>
-        /// <param name="e"></param>
         public delegate void ChangeAircraftCoordinate(AircraftPosition aircraft);
         public static event ChangeAircraftCoordinate ChangeAircraftCoordinateEvent;
         public static void OnChangeAircraftCoordinateEvent(AircraftPosition aircraft) =>
@@ -104,7 +98,6 @@ namespace TacticalEditor.Helpers
         /// <summary>
         /// Передает коллекцию ППМ'ов
         /// </summary>
-        /// <param name="e"></param>
         public delegate void PpmCollection(PpmPoint[] airPoints);
         public static event PpmCollection PpmCollectionEvent;
         public static void OnPpmCollectionEvent(PpmPoint[] airPoints) =>
@@ -112,16 +105,15 @@ namespace TacticalEditor.Helpers
 
         #endregion
 
-        #region Передает коллекцию Аэродромовв
+        #region Передает коллекцию Аэродромов
 
         /// <summary>
-        /// Передает коллекцию ППМ'ов
+        /// Передает коллекцию Аэродромов
         /// </summary>
-        /// <param name="e"></param>
-        public delegate void AirBaseCollection(AirBasePoint[] airBases);
-        public static event AirBaseCollection AirBaseCollectionEvent;
-        public static void OnAirBaseCollectionEvent(AirBasePoint[] airBases) =>
-            AirBaseCollectionEvent?.Invoke(airBases);
+        public delegate void AerodromeCollection(AerodromePoint[] aerodromePoints);
+        public static event AerodromeCollection AerodromeCollectionEvent;
+        public static void OnAerodromeCollectionEvent(AerodromePoint[] aerodromePoints) =>
+            AerodromeCollectionEvent?.Invoke(aerodromePoints);
 
         #endregion
 
@@ -139,12 +131,10 @@ namespace TacticalEditor.Helpers
 
         #endregion
 
-
         #region Передает состояние режима
         /// <summary>
         /// Передает состояние режима
         /// </summary>
-        /// <param name="e"></param>
         public delegate void MenuStatus(MenuStates e);
         public static event MenuStatus MenuStatusEvent;
 
@@ -156,6 +146,7 @@ namespace TacticalEditor.Helpers
         #endregion
 
         #region Передает состояние режима
+
         /// <summary>
         /// Передает состояние режима
         /// </summary>
@@ -169,8 +160,6 @@ namespace TacticalEditor.Helpers
         }
 
         #endregion
-
-
 
         #region Передает состояние режима
         /// <summary>

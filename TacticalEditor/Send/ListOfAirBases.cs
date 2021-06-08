@@ -4,37 +4,38 @@ using System.Runtime.InteropServices;
 using TacticalEditor.Helpers;
 using TacticalEditor.Models;
 using TacticalEditor.Models.NavPoint;
-using TacticalEditor.VisualObject.VisAirport;
+using TacticalEditor.VisualObject.VisAerodrome;
+
 
 namespace TacticalEditor.Send
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    class ListOfAirBases : Header
+    class ListOfAerodromes : Header
     {
         private byte[] _head;
-        private int _countAirBases;
-        private int _activeAirbase;
+        private int _countAerodromes;
+        private int _activeAerodrome;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        AirBasePoint[] AirBases = new AirBasePoint[20];
+        AerodromePoint[] _aerodromes = new AerodromePoint[20];
         AircraftPosition _aircraft = new AircraftPosition();
         MeasureHelper _measureHelper = new MeasureHelper();
 
-        public ListOfAirBases()
+        public ListOfAerodromes()
         {
-            _head = GetHead("TacticalEditor_AirBases");
-            EventsHelper.AirBaseCollectionEvent += AirBaseCollectionEvent;
+            _head = GetHead("TacticalEditor_Aerodromes");
+            EventsHelper.AerodromeCollectionEvent += AerodromeCollectionEvent;
             EventsHelper.ChangeAircraftCoordinateEvent += ChangeAircraftCoordinate;
-            EventsHelper.ChangeAirportEvent += ChangeAirportEvent;
+            EventsHelper.ChangeAerodromeEvent += ChangeAerodrome;
 
         }
 
-        private void ChangeAirportEvent(AirBasePoint e)
+        private void ChangeAerodrome(AerodromePoint e)
         {
-            for (int i = 0; i < AirBases.Length; i++)
-                if (AirBases[i] != null)
-                    if (AirBases[i].Guid == e.Guid)
-                        _activeAirbase = i;
+            for (int i = 0; i < _aerodromes.Length; i++)
+                if (_aerodromes[i] != null)
+                    if (_aerodromes[i].Guid == e.Guid)
+                        _activeAerodrome = i;
         }
 
         private void ChangeAircraftCoordinate(AircraftPosition aircraft)
@@ -42,13 +43,13 @@ namespace TacticalEditor.Send
             _aircraft = aircraft;
         }
 
-        private void AirBaseCollectionEvent(AirBasePoint[] airbases)
+        private void AerodromeCollectionEvent(AerodromePoint[] aerodromePoints)
         {
-            _countAirBases = 0;
-            AirBases = airbases;
-            foreach (var airbase in AirBases)
-                if (airbase != null)
-                    _countAirBases++;
+            _countAerodromes = 0;
+            _aerodromes = aerodromePoints;
+            foreach (var aerodrome in _aerodromes)
+                if (aerodrome != null)
+                    _countAerodromes++;
         }
 
         public byte[] GetByte()
@@ -56,17 +57,17 @@ namespace TacticalEditor.Send
             Calc();
             List<byte> result = new List<byte>();
             result.AddRange(_head);
-            result.AddRange(BitConverter.GetBytes(_countAirBases));
-            result.AddRange(BitConverter.GetBytes(_activeAirbase));
-            for(int i = 0; i < AirBases.Length; i++)
-                result.AddRange(AirBases[i] == null
-                    ? ConvertHelper.ObjectToByte(new AirBaseInfo())
-                    : ConvertHelper.ObjectToByte(AirBases[i].AirportInfo));
+            result.AddRange(BitConverter.GetBytes(_countAerodromes));
+            result.AddRange(BitConverter.GetBytes(_activeAerodrome));
+            for(int i = 0; i < _aerodromes.Length; i++)
+                result.AddRange(_aerodromes[i] == null
+                    ? ConvertHelper.ObjectToByte(new AerodromeInfo())
+                    : ConvertHelper.ObjectToByte(_aerodromes[i].AerodromeInfo));
 
-            for(int i = 0; i < AirBases.Length; i++)
-                result.AddRange(AirBases[i] == null
+            for(int i = 0; i < _aerodromes.Length; i++)
+                result.AddRange(_aerodromes[i] == null
                     ? ConvertHelper.ObjectToByte(new NavigationPoint() { Type = -1 })
-                    : ConvertHelper.ObjectToByte(AirBases[i].NavigationPoint));
+                    : ConvertHelper.ObjectToByte(_aerodromes[i].NavigationPoint));
 
 
             return result.ToArray();
@@ -74,17 +75,17 @@ namespace TacticalEditor.Send
 
         private void Calc()
         {
-            for(int i = 0; i < AirBases.Length; i++)
+            for(int i = 0; i < _aerodromes.Length; i++)
             {
-                if(AirBases[i] == null) continue;
+                if(_aerodromes[i] == null) continue;
 
-                AirBases[i].NavigationPoint.Measure.Distance =
-                    _measureHelper.GetDistanceInMLatLon(AirBases[i].NavigationPoint.GeoCoordinate.Latitude,
-                        AirBases[i].NavigationPoint.GeoCoordinate.Longitude,
+                _aerodromes[i].NavigationPoint.Measure.Distance =
+                    _measureHelper.GetDistanceInMLatLon(_aerodromes[i].NavigationPoint.GeoCoordinate.Latitude,
+                        _aerodromes[i].NavigationPoint.GeoCoordinate.Longitude,
                         _aircraft.GeoCoordinate.Latitude, _aircraft.GeoCoordinate.Longitude);
-                AirBases[i].NavigationPoint.Measure.Psi =
-                    _measureHelper.GetDegreesAzimuthLatLon(AirBases[i].NavigationPoint.GeoCoordinate.Latitude,
-                        AirBases[i].NavigationPoint.GeoCoordinate.Longitude,
+                _aerodromes[i].NavigationPoint.Measure.Psi =
+                    _measureHelper.GetDegreesAzimuthLatLon(_aerodromes[i].NavigationPoint.GeoCoordinate.Latitude,
+                        _aerodromes[i].NavigationPoint.GeoCoordinate.Longitude,
                         _aircraft.GeoCoordinate.Latitude, _aircraft.GeoCoordinate.Longitude);
             }
         }

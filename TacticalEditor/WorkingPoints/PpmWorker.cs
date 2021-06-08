@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Shapes;
 using TacticalEditor.Helpers;
 using TacticalEditor.Models.NavPoint;
-using TacticalEditor.VisualObject.VisAirport;
+using TacticalEditor.VisualObject.VisAerodrome;
 using TacticalEditor.VisualObject.VisPpm;
 
 namespace TacticalEditor.WorkingPoints
@@ -11,45 +11,30 @@ namespace TacticalEditor.WorkingPoints
     class PpmWorker
     {
         private int _countNavigationPoint;
-        private uint _sizeMap;
+     
         private Line _inLine;
         private readonly CoordinateHelper _coordinateHelper;
         private PpmPoint[] _ppmPoints;
-        private AirBasePoint _activeAirbase;
+        private AerodromePoint _activeAerodrome;
 
         public PpmWorker()
         {
             _coordinateHelper = new CoordinateHelper();
             _ppmPoints = new PpmPoint[20];
-            EventsHelper.ChangeOfSizeEvent += ChangeOfSizeEvent;
-            EventsHelper.ChangeAirportEvent += ChangeAirportEvent; ;
+            EventsHelper.ChangeAerodromeEvent += ChangeAerodrome;
             EventsHelper.OutLineFromLastPointEvent += OutLineFromLastPointEvent;
         }
 
-        private void ChangeAirportEvent(AirBasePoint e)
+        private void ChangeAerodrome(AerodromePoint e)
         {
-            _activeAirbase = e;
-        }
-
-        public void Get()
-        {
-	        var sizeMap = _sizeMap;
-	        _coordinateHelper.PixelToLatLon(new Point(_ppmPoints[0].Screen.RelativeX * sizeMap, _ppmPoints[0].Screen.RelativeY * sizeMap),
-		        sizeMap, out var lat, out var lon);
-
-	        MessageBox.Show("Lat = " + lat + "   Lot = " + lon);
+            _activeAerodrome = e;
         }
 
         private void OutLineFromLastPointEvent(Line outline)
         {
             _inLine = outline;
         }
-
-        private void ChangeOfSizeEvent(uint sizeMap)
-        {
-            _sizeMap = sizeMap;
-        }
-
+        
         public VisualPpm CrateVisualPpm(Point point)
         {
             if(_countNavigationPoint >= 19)
@@ -71,9 +56,6 @@ namespace TacticalEditor.WorkingPoints
             PpmPoint ppmPoint = new PpmPoint();
             ppmPoint.NavigationPoint.Name = new char[16];
             ppmPoint.NumberInRoute = _countNavigationPoint;
-            ppmPoint.Screen.RelativeX = point.X / _sizeMap;
-            ppmPoint.Screen.RelativeY = point.Y / _sizeMap;
-            ppmPoint.Screen.SizeMap = _sizeMap;
             ppmPoint.NavigationPoint = PrepareAirPoint(point);
             ppmPoint.Screen.LineIn = _inLine;
             var name = ("ППМ" + _countNavigationPoint).ToCharArray();
@@ -85,16 +67,16 @@ namespace TacticalEditor.WorkingPoints
 
         private NavigationPoint PrepareAirPoint(Point point)
         {
-
             NavigationPoint airPoint = new NavigationPoint();
-            _coordinateHelper.PixelToLatLon(point, _sizeMap, out var lat, out var lon);
+            _coordinateHelper.PixelToLatLon(point,  out var lat, out var lon);
             if (_countNavigationPoint == 1)
                 airPoint.Executable = 1;
             airPoint.GeoCoordinate.Latitude = lat;
             airPoint.GeoCoordinate.Longitude = lon;
-            _coordinateHelper.LocalCordToXZ(_activeAirbase.AirportInfo.Runway.Threshold.Latitude, _activeAirbase.AirportInfo.Runway.Threshold.Longitude, lat,lon, out var x, out var z);
+            _coordinateHelper.LocalCordToXZ(_activeAerodrome.AerodromeInfo.Runway.Threshold.Latitude, _activeAerodrome.AerodromeInfo.Runway.Threshold.Longitude, lat,lon, out var x, out var z);
             airPoint.GeoCoordinate.X = x;
             airPoint.GeoCoordinate.Z = z;
+            airPoint.GeoCoordinate.H = _coordinateHelper.GetElevation(lat, lon,185);
             airPoint.Measure.RDetect = 1000;
             airPoint.Type = 2;
             return airPoint;

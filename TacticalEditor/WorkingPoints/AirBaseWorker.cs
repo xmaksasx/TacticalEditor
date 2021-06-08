@@ -1,157 +1,145 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using TacticalEditor.Helpers;
 using TacticalEditor.ModelsXml;
-using TacticalEditor.VisualObject.VisAirport;
+using TacticalEditor.VisualObject.VisAerodrome;
 
 namespace TacticalEditor.WorkingPoints
 {
-    class AirBaseWorker
+    class AerodromeWorker
     {
-        private int _countAirPortPoint;
-        private AirBasePoint[] _airPortPoints;
-        private uint _sizeMap;
+        private int _countaerodromePoint;
+        private AerodromePoint[] _aerodromePoints;
         private readonly CoordinateHelper _coordinateHelper;
 
 
-        public AirBaseWorker()
+        public AerodromeWorker()
         {
-            _countAirPortPoint = 0;
-            _airPortPoints = new AirBasePoint[20];
+            _countaerodromePoint = 0;
+            _aerodromePoints = new AerodromePoint[20];
             _coordinateHelper = new CoordinateHelper();
-            EventsHelper.ChangeOfSizeEvent += EventsHelperOnChangeOfSizeEvent;
+           
         }
 
-        private void EventsHelperOnChangeOfSizeEvent(uint sizeMap)
+      
+
+
+        #region Aerodrome
+
+        public List<Aerodrome> LoadAerodromeXml()
         {
-            _sizeMap = sizeMap;
-        }
-
-
-        #region Airport
-
-        public List<Aerodrome> LoadAirBaseXml()
-        {
-            var airBaseXmls = new List<Aerodrome>();
-            string[] fileEntries = Directory.GetFiles("Airports");
+            var aerodromeXmls = new List<Aerodrome>();
+            string[] fileEntries = Directory.GetFiles("Aerodromes");
             foreach(string fileName in fileEntries)
             {
                 Aerodrome air;
                 XmlSerializer serializer = new XmlSerializer(typeof(Aerodrome));
                 using(FileStream fileStream = new FileStream(fileName, FileMode.Open))
                     air = (Aerodrome)serializer.Deserialize(fileStream);
-                airBaseXmls.Add(air);
+                aerodromeXmls.Add(air);
             }
-            return airBaseXmls;
+            return aerodromeXmls;
         }
 
-        public VisualAirBase CrateVisualAirBase(Aerodrome airbase)
+        public VisualAerodrome CrateVisualAerodrome(Aerodrome aerodrome)
         {
-            var airportPoint = PreparePpmPoint(airbase);
-            _airPortPoints[_countAirPortPoint] = airportPoint;
-            _countAirPortPoint++;
-            EventsHelper.OnAirBaseCollectionEvent(_airPortPoints);
-             return new VisualAirBase(airportPoint);
+            var aerodromePoint = PrepareAerodromePoint(aerodrome);
+            _aerodromePoints[_countaerodromePoint] = aerodromePoint;
+            _countaerodromePoint++;
+            EventsHelper.OnAerodromeCollectionEvent(_aerodromePoints);
+             return new VisualAerodrome(aerodromePoint);
         }
 
-        private AirBasePoint PreparePpmPoint(Aerodrome airport)
+        private AerodromePoint PrepareAerodromePoint(Aerodrome aerodrome)
         {
 
-            _coordinateHelper.LatLonToPixel(airport.latitude, airport.longitude, _sizeMap, out var px, out var py);
-            AirBasePoint airportPoint = new AirBasePoint();
+            _coordinateHelper.LatLonToPixel(aerodrome.Latitude, aerodrome.Longitude, out var px, out var py);
+            AerodromePoint aerodromePoint = new AerodromePoint();
 
-            airportPoint.NavigationPoint.Type = 1;
-            airportPoint.NavigationPoint.GeoCoordinate.H = airport.altitude;
-            airportPoint.NavigationPoint.GeoCoordinate.Latitude = airport.latitude;
-            airportPoint.NavigationPoint.GeoCoordinate.Longitude = airport.longitude;
+            aerodromePoint.NavigationPoint.Type = 1;
+            aerodromePoint.NavigationPoint.GeoCoordinate.H = aerodrome.Altitude;
+            aerodromePoint.NavigationPoint.GeoCoordinate.Latitude = aerodrome.Latitude;
+            aerodromePoint.NavigationPoint.GeoCoordinate.Longitude = aerodrome.Longitude;
 
+            PrepareThreshold(aerodromePoint, aerodrome);
+            PrepareLocalizer(aerodromePoint, aerodrome);
+            PrepareGlideSlope(aerodromePoint, aerodrome);
+            PrepareLocatorMiddle(aerodromePoint, aerodrome);
+            PrepareLocatorOuter(aerodromePoint, aerodrome);
 
-            PrepareThreshold(airportPoint, airport);
-            PrepareLocalizer(airportPoint, airport);
-            PrepareGlideSlope(airportPoint, airport);
-            PrepareLocatorMiddle(airportPoint, airport);
-            PrepareLocatorOuter(airportPoint, airport);
+            var name = aerodrome.Name.ToCharArray();
+            name.CopyTo(aerodromePoint.AerodromeInfo.Name, 0);
+            var country = aerodrome.Country.ToCharArray();
+            country.CopyTo(aerodromePoint.AerodromeInfo.Country, 0);
+            var rusname = aerodrome.Rusname.ToCharArray();
+            rusname.CopyTo(aerodromePoint.AerodromeInfo.RusName, 0);
+            aerodromePoint.AerodromeInfo.Runway.Width = aerodrome.Runway[0].Width;
+            aerodromePoint.AerodromeInfo.Runway.Length = aerodrome.Runway[0].Length;
+            aerodromePoint.AerodromeInfo.Runway.Heading = aerodrome.Runway[0].DirectCourse.Threshold.Heading;
+            aerodromePoint.Guid = new Guid(aerodrome.Guid);
 
-            var name = airport.name.ToCharArray();
-            name.CopyTo(airportPoint.AirportInfo.Name, 0);
-            var country = airport.country.ToCharArray();
-            country.CopyTo(airportPoint.AirportInfo.Country, 0);
-            var rusname = airport.rusname.ToCharArray();
-            rusname.CopyTo(airportPoint.AirportInfo.RusName, 0);
-            airportPoint.AirportInfo.Runway.Width = airport.Runway[0].width;
-            airportPoint.AirportInfo.Runway.Length = airport.Runway[0].length;
-            airportPoint.AirportInfo.Runway.Heading = airport.Runway[0].DirectCourse.Threshold.heading;
-
-
-            airportPoint.Screen.SizeMap = _sizeMap;
-            airportPoint.Screen.RelativeX = px;
-            airportPoint.Screen.RelativeY = py;
-
-            if(airport.name == "Adler")
+            if (aerodrome.Name == "Lipetsk")
             {
-                airportPoint.AirportInfo.ActiveAirport = true;
-                airportPoint.NavigationPoint.Measure.Psi = airport.Runway[0].DirectCourse.Threshold.heading;
-            
-                //  _navigationPoints[0] = airportPoint.NavigationPoint;
-               // EventsHelper.OnPpmCollectionEvent(_navigationPoints);
-                //AddVisualAircraft(airport);
+                aerodromePoint.AerodromeInfo.ActiveAerodrome = true;
+                aerodromePoint.NavigationPoint.Measure.Psi = aerodrome.Runway[0].DirectCourse.Threshold.Heading;
             }
-            return airportPoint;
+            return aerodromePoint;
         }
 
-        private void PrepareThreshold(AirBasePoint airportPoint, Aerodrome airport)
+        private void PrepareThreshold(AerodromePoint aerodromePoint, Aerodrome aerodrome)
         {
          
-            airportPoint.AirportInfo.Runway.Threshold.H = airport.altitude;
-            airportPoint.AirportInfo.Runway.Threshold.Latitude = airport.Runway[0].DirectCourse.Threshold.latitude;
-            airportPoint.AirportInfo.Runway.Threshold.Longitude = airport.Runway[0].DirectCourse.Threshold.longitude;
-            airportPoint.AirportInfo.Runway.Threshold.X = airport.Runway[0].DirectCourse.Threshold.x;
-            airportPoint.AirportInfo.Runway.Threshold.Z = airport.Runway[0].DirectCourse.Threshold.z;
+            aerodromePoint.AerodromeInfo.Runway.Threshold.H = aerodrome.Altitude;
+            aerodromePoint.AerodromeInfo.Runway.Threshold.Latitude = aerodrome.Runway[0].DirectCourse.Threshold.Latitude;
+            aerodromePoint.AerodromeInfo.Runway.Threshold.Longitude = aerodrome.Runway[0].DirectCourse.Threshold.Longitude;
+            aerodromePoint.AerodromeInfo.Runway.Threshold.X = aerodrome.Runway[0].DirectCourse.Threshold.X;
+            aerodromePoint.AerodromeInfo.Runway.Threshold.Z = aerodrome.Runway[0].DirectCourse.Threshold.Z;
         }
 
-        private void PrepareLocalizer(AirBasePoint airportPoint, Aerodrome airport)
+        private void PrepareLocalizer(AerodromePoint aerodromePoint, Aerodrome aerodrome)
         {
-            airportPoint.AirportInfo.Runway.Localizer.H = airport.altitude;
-            airportPoint.AirportInfo.Runway.Localizer.Latitude = airport.Runway[0].DirectCourse.ILS.LOC.latitude;
-            airportPoint.AirportInfo.Runway.Localizer.Longitude = airport.Runway[0].DirectCourse.ILS.LOC.longitude;
-            _coordinateHelper.LocalCordToXZ(airport.Runway[0].DirectCourse.Threshold.latitude, airport.Runway[0].DirectCourse.Threshold.longitude,
-                airport.Runway[0].DirectCourse.ILS.LOC.latitude, airport.Runway[0].DirectCourse.ILS.LOC.longitude, out var x, out var z);
-            airportPoint.AirportInfo.Runway.Localizer.X = x;
-            airportPoint.AirportInfo.Runway.Localizer.Z = z;
+            aerodromePoint.AerodromeInfo.Runway.Localizer.H = aerodrome.Altitude;
+            aerodromePoint.AerodromeInfo.Runway.Localizer.Latitude = aerodrome.Runway[0].DirectCourse.ILS.LOC.Latitude;
+            aerodromePoint.AerodromeInfo.Runway.Localizer.Longitude = aerodrome.Runway[0].DirectCourse.ILS.LOC.Longitude;
+            _coordinateHelper.LocalCordToXZ(aerodrome.Runway[0].DirectCourse.Threshold.Latitude, aerodrome.Runway[0].DirectCourse.Threshold.Longitude,
+                aerodrome.Runway[0].DirectCourse.ILS.LOC.Latitude, aerodrome.Runway[0].DirectCourse.ILS.LOC.Longitude, out var x, out var z);
+            aerodromePoint.AerodromeInfo.Runway.Localizer.X = x;
+            aerodromePoint.AerodromeInfo.Runway.Localizer.Z = z;
         }
 
-        private void PrepareGlideSlope(AirBasePoint airportPoint, Aerodrome airport)
+        private void PrepareGlideSlope(AerodromePoint aerodromePoint, Aerodrome aerodrome)
         {
-            airportPoint.AirportInfo.Runway.GlideSlope.H = airport.altitude;
-            airportPoint.AirportInfo.Runway.GlideSlope.Latitude = airport.Runway[0].DirectCourse.ILS.GS.latitude;
-            airportPoint.AirportInfo.Runway.GlideSlope.Longitude = airport.Runway[0].DirectCourse.ILS.GS.longitude;
-            _coordinateHelper.LocalCordToXZ(airport.Runway[0].DirectCourse.Threshold.latitude, airport.Runway[0].DirectCourse.Threshold.longitude,
-                airport.Runway[0].DirectCourse.ILS.GS.latitude, airport.Runway[0].DirectCourse.ILS.GS.longitude, out var x, out var z);
-            airportPoint.AirportInfo.Runway.GlideSlope.X = x;
-            airportPoint.AirportInfo.Runway.GlideSlope.Z = z;
+            aerodromePoint.AerodromeInfo.Runway.GlideSlope.H = aerodrome.Altitude;
+            aerodromePoint.AerodromeInfo.Runway.GlideSlope.Latitude = aerodrome.Runway[0].DirectCourse.ILS.GS.Latitude;
+            aerodromePoint.AerodromeInfo.Runway.GlideSlope.Longitude = aerodrome.Runway[0].DirectCourse.ILS.GS.Longitude;
+            _coordinateHelper.LocalCordToXZ(aerodrome.Runway[0].DirectCourse.Threshold.Latitude, aerodrome.Runway[0].DirectCourse.Threshold.Longitude,
+                aerodrome.Runway[0].DirectCourse.ILS.GS.Latitude, aerodrome.Runway[0].DirectCourse.ILS.GS.Longitude, out var x, out var z);
+            aerodromePoint.AerodromeInfo.Runway.GlideSlope.X = x;
+            aerodromePoint.AerodromeInfo.Runway.GlideSlope.Z = z;
         }
 
-        private void PrepareLocatorMiddle(AirBasePoint airportPoint, Aerodrome airport)
+        private void PrepareLocatorMiddle(AerodromePoint aerodromePoint, Aerodrome aerodrome)
         {
-            airportPoint.AirportInfo.Runway.LocatorMiddle.H = airport.altitude;
-            airportPoint.AirportInfo.Runway.LocatorMiddle.Latitude = airport.Runway[0].DirectCourse.LocatorMiddle.latitude;
-            airportPoint.AirportInfo.Runway.LocatorMiddle.Longitude = airport.Runway[0].DirectCourse.LocatorMiddle.longitude;
-            _coordinateHelper.LocalCordToXZ(airport.Runway[0].DirectCourse.Threshold.latitude, airport.Runway[0].DirectCourse.Threshold.longitude,
-                airport.Runway[0].DirectCourse.LocatorMiddle.latitude, airport.Runway[0].DirectCourse.LocatorMiddle.longitude, out var x, out var z);
-            airportPoint.AirportInfo.Runway.LocatorMiddle.X = x;
-            airportPoint.AirportInfo.Runway.LocatorMiddle.Z = z;
+            aerodromePoint.AerodromeInfo.Runway.LocatorMiddle.H = aerodrome.Altitude;
+            aerodromePoint.AerodromeInfo.Runway.LocatorMiddle.Latitude = aerodrome.Runway[0].DirectCourse.LocatorMiddle.Latitude;
+            aerodromePoint.AerodromeInfo.Runway.LocatorMiddle.Longitude = aerodrome.Runway[0].DirectCourse.LocatorMiddle.Longitude;
+            _coordinateHelper.LocalCordToXZ(aerodrome.Runway[0].DirectCourse.Threshold.Latitude, aerodrome.Runway[0].DirectCourse.Threshold.Longitude,
+                aerodrome.Runway[0].DirectCourse.LocatorMiddle.Latitude, aerodrome.Runway[0].DirectCourse.LocatorMiddle.Longitude, out var x, out var z);
+            aerodromePoint.AerodromeInfo.Runway.LocatorMiddle.X = x;
+            aerodromePoint.AerodromeInfo.Runway.LocatorMiddle.Z = z;
         }
 
-        private void PrepareLocatorOuter(AirBasePoint airportPoint, Aerodrome airport)
+        private void PrepareLocatorOuter(AerodromePoint aerodromePoint, Aerodrome aerodrome)
         {
-            airportPoint.AirportInfo.Runway.LocatorOuter.H = airport.altitude;
-            airportPoint.AirportInfo.Runway.LocatorOuter.Latitude = airport.Runway[0].DirectCourse.LocatorOuter.latitude;
-            airportPoint.AirportInfo.Runway.LocatorOuter.Longitude = airport.Runway[0].DirectCourse.LocatorOuter.longitude;
-            _coordinateHelper.LocalCordToXZ(airport.Runway[0].DirectCourse.Threshold.latitude, airport.Runway[0].DirectCourse.Threshold.longitude,
-                airport.Runway[0].DirectCourse.LocatorOuter.latitude, airport.Runway[0].DirectCourse.LocatorOuter.longitude, out var x, out var z);
-            airportPoint.AirportInfo.Runway.LocatorOuter.X = x;
-            airportPoint.AirportInfo.Runway.LocatorOuter.Z = z;
+            aerodromePoint.AerodromeInfo.Runway.LocatorOuter.H = aerodrome.Altitude;
+            aerodromePoint.AerodromeInfo.Runway.LocatorOuter.Latitude = aerodrome.Runway[0].DirectCourse.LocatorOuter.Latitude;
+            aerodromePoint.AerodromeInfo.Runway.LocatorOuter.Longitude = aerodrome.Runway[0].DirectCourse.LocatorOuter.Longitude;
+            _coordinateHelper.LocalCordToXZ(aerodrome.Runway[0].DirectCourse.Threshold.Latitude, aerodrome.Runway[0].DirectCourse.Threshold.Longitude,
+                aerodrome.Runway[0].DirectCourse.LocatorOuter.Latitude, aerodrome.Runway[0].DirectCourse.LocatorOuter.Longitude, out var x, out var z);
+            aerodromePoint.AerodromeInfo.Runway.LocatorOuter.X = x;
+            aerodromePoint.AerodromeInfo.Runway.LocatorOuter.Z = z;
         }
 
 

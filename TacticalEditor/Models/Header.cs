@@ -25,5 +25,15 @@ namespace TacticalEditor.Models
             bytesCap.CopyTo(head, 0);
             return head;
         }
+
+        public byte[] SetHead(string caption, string subCaption)
+        {
+	        byte[] cap = Encoding.UTF8.GetBytes(caption);
+	        byte[] subCap = Encoding.UTF8.GetBytes(subCaption);
+            byte[] head = new byte[68];
+            cap.CopyTo(head, 0);
+            subCap.CopyTo(head, 31);
+            return head;
+        }
     }
 }

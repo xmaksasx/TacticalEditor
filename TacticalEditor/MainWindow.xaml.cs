@@ -13,17 +13,16 @@ namespace TacticalEditor
     public partial class MainWindow : Window
     {
         private MapHelper _mapHelper;
-        private CoordinateHelper _coordinateHelper;
         private VisualObjectHelper _visualObjectHelper;
         private ProcessingLoop _processingLoop;
-        private MeasureHelper _measureHelper;
+        private RouteHelper _routeHelper;
         private MenuStates _menuState;
         private MieaPacket _mieaPacket;
 
 
         public MainWindow()
         {
-            InitializeComponent();
+	        InitializeComponent();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -32,9 +31,7 @@ namespace TacticalEditor
             _mapHelper = new MapHelper(Grd, ScrollViewer, 5);
             _processingLoop = new ProcessingLoop();
             _visualObjectHelper = new VisualObjectHelper(PlotterVisualObject);
-            _coordinateHelper = new CoordinateHelper();
-            _measureHelper = new MeasureHelper();
-
+            _routeHelper = RouteHelper.GetInstance();
             EventsHelper.DebugNumberEvent += Debug;
             ScrollViewer.ScrollToVerticalOffset(2300);
             ScrollViewer.ScrollToHorizontalOffset(4130);
@@ -89,7 +86,6 @@ namespace TacticalEditor
                     _menuState = MenuStates.Measure;
                     EventsHelper.OnMenuStatusEvent(_menuState);
                     break;
-                    
             }
         }
 
@@ -99,11 +95,14 @@ namespace TacticalEditor
             dlg.DefaultExt = ".rut";
             dlg.Filter = "Route Files (*.rut)|*.rut";
             bool? result = dlg.ShowDialog();
-            if(result == true)
+            if (result == true)
             {
-                string filename = dlg.FileName;
-                _visualObjectHelper.OpenRoute(filename);
+	            ClearRoute_OnClick(null, null);
+                var filename = dlg.FileName;
+	            var route = _routeHelper.LoadRoute(filename);
+	            _visualObjectHelper.LoadRoute(route);
             }
+
             EventsHelper.OnMenuStatusEvent(_menuState);
         }
 
@@ -117,13 +116,14 @@ namespace TacticalEditor
             if(result == true)
             {
                 string filename = dlg.FileName;
-                _visualObjectHelper.SaveRoute(filename);
+                _routeHelper.SaveRoute(filename);
             }
         }
 
         private void ClearRoute_OnClick(object sender, RoutedEventArgs e)
         {
             _visualObjectHelper.Clear();
+            _routeHelper.ClearRoute();
         }
 
         private void Close_OnClick(object sender, RoutedEventArgs e)
@@ -134,17 +134,17 @@ namespace TacticalEditor
 
         private void RouteCube_OnClick(object sender, RoutedEventArgs e)
         {
-            _visualObjectHelper.AddDebugPm();
+           // _visualObjectHelper.AddDebugPm();
         }
 
         private void RouteBox_OnClick(object sender, RoutedEventArgs e)
         {
-            _visualObjectHelper.BuildBox();
+           // _visualObjectHelper.BuildBox();
         }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-	        _visualObjectHelper.get();
+	       // _visualObjectHelper.get();
         }
     }
 

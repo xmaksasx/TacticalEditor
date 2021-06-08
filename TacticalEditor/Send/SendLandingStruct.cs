@@ -1,6 +1,7 @@
-﻿using TacticalEditor.Helpers;
+﻿using System;
+using TacticalEditor.Helpers;
 using TacticalEditor.Models;
-using TacticalEditor.VisualObject.VisAirport;
+using TacticalEditor.VisualObject.VisAerodrome;
 
 namespace TacticalEditor.Send
 {
@@ -9,29 +10,30 @@ namespace TacticalEditor.Send
         LandingHelper _landingHelper;
         Landing _landing;
         AircraftPosition _aircraft;
-        AirBasePoint _airBase;
+        AerodromePoint _aerodromePoint;
         CoordinateHelper _coordinateHelper;
 
         public SendLandingStruct()
         {
             _landingHelper = new LandingHelper();
             _aircraft = new AircraftPosition();
-            _airBase = new AirBasePoint();
+            _aerodromePoint = new AerodromePoint();
             _landing = new Landing();
             _coordinateHelper = new CoordinateHelper();
             _landing.Head = _landing.GetHead("TacticalEditor_Landing");
             EventsHelper.ChangeAircraftCoordinateEvent += ChangeAircraftCoordinate;
-            EventsHelper.ChangeAirportEvent += ChangeAirportEvent;
+            EventsHelper.ChangeAerodromeEvent += ChangeAerodrome;
         }
 
-        private void ChangeAirportEvent(AirBasePoint airBase)
+        private void ChangeAerodrome(AerodromePoint aerodromePoint)
         {
-            _airBase = airBase;
+            _aerodromePoint = aerodromePoint;
         }
+
         public byte[] GetByte()
         {
-            var aBGeo = _airBase.NavigationPoint.GeoCoordinate;
-            var runwayGeo = _airBase.AirportInfo.Runway;
+            var aBGeo = _aerodromePoint.NavigationPoint.GeoCoordinate;
+            var runwayGeo = _aerodromePoint.AerodromeInfo.Runway;
          
             double X= _aircraft.GeoCoordinate.X + runwayGeo.Threshold.X;
             double Z = _aircraft.GeoCoordinate.Z + runwayGeo.Threshold.Z;
@@ -73,6 +75,15 @@ namespace TacticalEditor.Send
             DebugParameters.Gs = _landing.IndicatorGs;
 
             return ConvertHelper.ObjectToByte(_landing);
+        }
+
+        public byte[] GetByteReverse()
+        {
+	        _landing.Head = _landing.SetHead("Landing", "Landing");
+            var bytes = ConvertHelper.ObjectToByte(_landing);
+	        for (int i = 68; i < bytes.Length; i += 8)
+		        Array.Reverse(bytes, i, 8);
+	        return bytes;
         }
 
         private void ChangeAircraftCoordinate(AircraftPosition aircraft)

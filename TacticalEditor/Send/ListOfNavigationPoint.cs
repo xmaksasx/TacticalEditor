@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using TacticalEditor.Helpers;
 using TacticalEditor.Models;
 using TacticalEditor.Models.NavPoint;
-using TacticalEditor.VisualObject.VisAirport;
+using TacticalEditor.VisualObject.VisAerodrome;
 using TacticalEditor.VisualObject.VisPpm;
 
 namespace TacticalEditor.Send
@@ -22,21 +22,21 @@ namespace TacticalEditor.Send
         MeasureHelper _measureHelper = new MeasureHelper();
         CoordinateHelper _coordinateHelper = new CoordinateHelper();
         AircraftPosition _aircraft = new AircraftPosition();
-        AirBasePoint _airBasePoint = new AirBasePoint();
+        AerodromePoint _aerodromePoint = new AerodromePoint();
 
 
 
         public ListOfNavigationPoint()
         {
             EventsHelper.PpmCollectionEvent += PpmCollection;
-            EventsHelper.ChangeAirportEvent += ChangeAirportEvent;
+            EventsHelper.ChangeAerodromeEvent += ChangeAerodrome;
             EventsHelper.ChangeAircraftCoordinateEvent += ChangeAircraftCoordinate;
             _head = GetHead("TacticalEditor_PpmPoints");
         }
 
-        private void ChangeAirportEvent(AirBasePoint e)
+        private void ChangeAerodrome(AerodromePoint e)
         {
-            _airBasePoint = e;
+            _aerodromePoint = e;
         }
 
         private void ChangeAircraftCoordinate(AircraftPosition aircraft)

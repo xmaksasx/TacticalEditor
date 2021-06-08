@@ -1,13 +1,13 @@
 ﻿using System;
-using TacticalEditor.Models;
 using TacticalEditor.Models.NavPoint;
 
-namespace TacticalEditor.VisualObject.VisAirport
+
+namespace TacticalEditor.VisualObject.VisAerodrome
 {
-    public class AirBasePoint
+    public class AerodromePoint
     {
 
-        public AirBaseInfo AirportInfo;
+        public AerodromeInfo AerodromeInfo;
 
         /// <summary>
         /// Геодезические координаты
@@ -21,12 +21,11 @@ namespace TacticalEditor.VisualObject.VisAirport
 
         public Guid Guid;
 
-        public AirBasePoint()
+        public AerodromePoint()
         {
             Screen = new ScreenCoordinate();
             NavigationPoint = new NavigationPoint();
-            AirportInfo= new AirBaseInfo();
-            Guid = Guid.NewGuid();
+            AerodromeInfo = new AerodromeInfo();
         }
     }
 }

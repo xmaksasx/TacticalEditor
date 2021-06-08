@@ -1,9 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace TacticalEditor.VisualObject.VisAirport
+
+namespace TacticalEditor.VisualObject.VisAerodrome
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public class  AirBaseInfo 
+    public class AerodromeInfo
     {
         /// <summary>
         /// Название аэропорта на кириллице
@@ -26,7 +27,7 @@ namespace TacticalEditor.VisualObject.VisAirport
         /// <summary>
         /// Признак того что маршрут начинается с этого аэропорта
         /// </summary>
-        public bool ActiveAirport;
+        public bool ActiveAerodrome;
 
         /// <summary>
         /// Информация о взлетной полосе

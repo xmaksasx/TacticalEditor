@@ -6,6 +6,7 @@ namespace TacticalEditor.Helpers
 {
     class CoordinateHelper
     {
+	    private static uint _mapSize;
 
         #region Получение высоты
 
@@ -41,13 +42,13 @@ namespace TacticalEditor.Helpers
         /// <param name="mapSize"></param>
         /// <param name="latitude"></param>
         /// <param name="longitude"></param>
-        public void PixelToLatLon(Point point, uint mapSize, out double latitude, out double longitude)
+        public void PixelToLatLon(Point point, out double latitude, out double longitude)
         {
             var pixelX = point.X;
             var pixelY = point.Y;
 
-            double x = (Clip(pixelX, 0, mapSize - 1) / mapSize) - 0.5;
-            double y = 0.5 - (Clip(pixelY, 0, mapSize - 1) / mapSize);
+            double x = (Clip(pixelX, 0, _mapSize - 1) / _mapSize) - 0.5;
+            double y = 0.5 - (Clip(pixelY, 0, _mapSize - 1) / _mapSize);
             latitude = 90 - 360 * Math.Atan(Math.Exp(-y * 2 * Math.PI)) / Math.PI;
             longitude = 360 * x;
         }
@@ -60,7 +61,7 @@ namespace TacticalEditor.Helpers
         /// <param name="mapSize"></param>
         /// <param name="pixelX"></param>
         /// <param name="pixelY"></param>
-        public void LatLonToPixel(double latitude, double longitude, uint mapSize, out double pixelX, out double pixelY)
+        public void LatLonToPixel(double latitude, double longitude,  out double pixelX, out double pixelY)
         {
             latitude = Clip(latitude, MinLatitude, MaxLatitude);
             longitude = Clip(longitude, MinLongitude, MaxLongitude);
@@ -69,13 +70,19 @@ namespace TacticalEditor.Helpers
             double sinLatitude = Math.Sin(latitude * Math.PI / 180);
             double y = 0.5 - Math.Log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
 
-            pixelX = Clip(x * mapSize + 0.5, 0, mapSize - 1);
-            pixelY = Clip(y * mapSize + 0.5, 0, mapSize - 1);
+            pixelX = Clip(x * _mapSize + 0.5, 0, _mapSize - 1);
+            pixelY = Clip(y * _mapSize + 0.5, 0, _mapSize - 1);
         }
 
-        private static uint MapSize(int levelOfDetail)
+        /// <summary>
+        /// Отдает размер карты от масштаба
+        /// </summary>
+        /// <param name="levelOfDetail"></param>
+        /// <returns></returns>
+        public static uint MapSize(int levelOfDetail)
         {
-            return (uint) 256 << levelOfDetail;
+	        _mapSize = (uint) 256 << levelOfDetail;
+            return _mapSize;
         }
 
         /// <summary>  
@@ -107,6 +114,7 @@ namespace TacticalEditor.Helpers
         {
             return GroundResolution(latitude, levelOfDetail) * screenDpi / 0.0254;
         }
+
         private double Clip(double n, double minValue, double maxValue)
         {
             return Math.Min(Math.Max(n, minValue), maxValue);
@@ -307,7 +315,7 @@ Gp2Linear2(FL0, FEast, LatT, LonT);
         */
     #endregion
 
-    public string Grad2GradMinSec(double degree)
+		public string Grad2GradMinSec(double degree)
         {
 
             var deg = (int) degree;

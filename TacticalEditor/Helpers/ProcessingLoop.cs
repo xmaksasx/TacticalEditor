@@ -9,7 +9,7 @@ namespace TacticalEditor.Helpers
     class ProcessingLoop
     {
         private ListOfNavigationPoint _listOfNavigationPoint;
-        private ListOfAirBases _listOfAirBases;
+        private ListOfAerodromes _listOfAerodromes;
         private Thread _threadSend;
         private Thread _threadReceive;
         private UdpHelper _udpHelper;
@@ -17,8 +17,9 @@ namespace TacticalEditor.Helpers
         private AircraftPosition _aircraftPosition;
         private SendAircraftStruct _sendAircraftStruct;
         private SendRouteToIup _sendRouteToIup;
+        private SendToSvvo _sendToSvvo;
         private CalculatePpmPoints _calculatePpmPoints;
-        private CalculateAirBases _calculateAirBases;
+        private CalculateAerodromes _calculateAerodromes;
         private ChangeNp _changeNp;
         private bool IsLooping;
 
@@ -30,12 +31,13 @@ namespace TacticalEditor.Helpers
             _aircraftPosition = new AircraftPosition();
 
             _listOfNavigationPoint = new ListOfNavigationPoint();
-            _listOfAirBases = new ListOfAirBases();
+            _listOfAerodromes = new ListOfAerodromes();
             _sendLandingStruct = new SendLandingStruct();
             _sendAircraftStruct = new SendAircraftStruct();
             _sendRouteToIup = new SendRouteToIup();
             _calculatePpmPoints = new CalculatePpmPoints();
-            _calculateAirBases = new CalculateAirBases();
+            _calculateAerodromes = new CalculateAerodromes();
+            _sendToSvvo = new SendToSvvo();
             _changeNp = new ChangeNp();
             _threadSend = new Thread(SendingLoop);
             _threadSend.Start();
@@ -49,11 +51,12 @@ namespace TacticalEditor.Helpers
             while (IsLooping)
             {
                 _udpHelper.Send(_listOfNavigationPoint.GetByte(), "255.255.255.255", 20041);
-                _udpHelper.Send(_listOfAirBases.GetByte(), "255.255.255.255", 20020);
+                _udpHelper.Send(_listOfAerodromes.GetByte(), "255.255.255.255", 20020);
                 _udpHelper.Send(_sendLandingStruct.GetByte(), "255.255.255.255", 20020);
                 _udpHelper.Send(_sendAircraftStruct.GetByte(_aircraftPosition), "255.255.255.255", 20020);
+                _udpHelper.Send(_sendLandingStruct.GetByteReverse(), "192.168.1.56", 30041);
                 _udpHelper.Send(_sendRouteToIup.GetByteNp(), "192.168.1.56", 30042);
-                _udpHelper.Send(_sendRouteToIup.GetByteAirports(), "192.168.1.56", 30043);
+                _udpHelper.Send(_sendRouteToIup.GetByteAerodromes(), "192.168.1.56", 30043);
                 Thread.Sleep(20);
                 EventsHelper.OnDebugNumberEvent();
             }

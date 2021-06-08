@@ -20,6 +20,9 @@ namespace TacticalEditor.Models
         [Description("высота ландшафта над уровнем моря [м]")]
         public double HLand;
 
+        [Description("скорость [км/ч]")]
+        public double V;
+
         public GeoCoordinate GeoCoordinate;
     }
 }

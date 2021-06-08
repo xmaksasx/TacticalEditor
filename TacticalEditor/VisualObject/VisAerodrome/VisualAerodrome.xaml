@@ -1,14 +1,13 @@
 ﻿<UserControl
-    x:Class="TacticalEditor.VisualObject.VisAirport.VisualAirBase"
+    x:Class="TacticalEditor.VisualObject.VisAerodrome.VisualAerodrome"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:TacticalEditor.VisualObject"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="30"
     Height="30"
     Margin="-15,-15,0,0"
-    PreviewMouseDoubleClick="VisualAirport_OnPreviewMouseDoubleClick"
+    PreviewMouseDoubleClick="VisualAerodrome_OnPreviewMouseDoubleClick"
     mc:Ignorable="d">
 
     <Grid

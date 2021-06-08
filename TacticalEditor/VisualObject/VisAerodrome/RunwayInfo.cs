@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using TacticalEditor.Models.NavPoint;
 
-namespace TacticalEditor.VisualObject.VisAirport
+namespace TacticalEditor.VisualObject.VisAerodrome
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct RunwayInfo

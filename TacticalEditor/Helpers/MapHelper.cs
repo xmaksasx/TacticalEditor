@@ -32,7 +32,7 @@ namespace TacticalEditor.Helpers
 
         private void GridResize()
         {
-            SizeMap = MapSize(_levelOfDetail);
+            SizeMap = CoordinateHelper.MapSize(_levelOfDetail);
             int rowCol = (int) Math.Pow(2, _levelOfDetail);
             _grid.Height = SizeMap;
             _grid.Width = SizeMap;
@@ -52,8 +52,8 @@ namespace TacticalEditor.Helpers
 
         private void ZoomMap()
         {
-            uint sizeMap = MapSize(_levelOfDetail);
-            if (_grid.ActualHeight < sizeMap)
+        
+            if (_grid.ActualHeight < SizeMap)
             {
                 var point = Mouse.GetPosition(_grid);
                 var vOffset = (long) (point.Y + _scrollViewer.ContentVerticalOffset);
@@ -62,7 +62,7 @@ namespace TacticalEditor.Helpers
                 _scrollViewer.ScrollToHorizontalOffset(hOffset);
             }
 
-            if (_grid.ActualHeight > sizeMap)
+            if (_grid.ActualHeight > SizeMap)
             {
                 var point = Mouse.GetPosition(_grid);
                 var vOffset = (long)(_scrollViewer.ContentVerticalOffset - point.Y / 2);
@@ -111,12 +111,7 @@ namespace TacticalEditor.Helpers
                 }
             }
         }
-
-        private uint MapSize(int levelOfDetail)
-        {
-            return (uint)256 << levelOfDetail;
-        }
-
+     
         private void ScrollViewer_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             _scrollViewer.ReleaseMouseCapture();

@@ -34,7 +34,7 @@ namespace TacticalEditor.Models.NavPoint
         public GeoCoordinate GeoCoordinate;
 
         /// <summary>
-        /// Рассчетные параметры 
+        /// Расчетные параметры 
         /// </summary>
         public Measure Measure;
 

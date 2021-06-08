@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using TacticalEditor.Helpers;
-using TacticalEditor.VisualObject.VisAirport;
+using TacticalEditor.VisualObject.VisAerodrome;
 using TacticalEditor.VisualObject.VisPpm;
 
 namespace TacticalEditor.Models
@@ -14,7 +14,7 @@ namespace TacticalEditor.Models
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
         public PpmPoint[] Points = new PpmPoint[20];
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        public AirBasePoint[] AirBases = new AirBasePoint[20];
+        public AerodromePoint[] Aerodromes = new AerodromePoint[20];
         private UdpClient _sendClient;
 
         public MieaPacket()
@@ -27,25 +27,25 @@ namespace TacticalEditor.Models
             hh.ToCharArray().CopyTo(_fp.NameRoute, 0);
             _fp.WayPoint = new T_PPM_FP[149];
             EventsHelper.PpmCollectionEvent += OnPpmCollectionEvent;
-            EventsHelper.AirBaseCollectionEvent += OnAirBaseCollectionEvent;
-            EventsHelper.ChangeAirportEvent += OnChangeAirportEvent;
+            EventsHelper.AerodromeCollectionEvent += OnAerodromeCollectionEvent;
+            EventsHelper.ChangeAerodromeEvent += ChangeAerodrome;
         }
 
-        private void OnChangeAirportEvent(AirBasePoint e)
+        private void ChangeAerodrome(AerodromePoint e)
         {
-            _fp.Departure = SetAirport(e);
-            _fp.Arrival = SetAirport(e);
+            _fp.Departure = SetAerodrome(e);
+            _fp.Arrival = SetAerodrome(e);
         }
 
 
-        private void OnAirBaseCollectionEvent(AirBasePoint[] airbases)
+        private void OnAerodromeCollectionEvent(AerodromePoint[] aerodromePoints)
         {
-            AirBases = airbases;
-            for (int i = 0; i < airbases.Length; i++)
-                if (airbases[i] != null && airbases[i].AirportInfo.ActiveAirport)
+            Aerodromes = aerodromePoints;
+            for (int i = 0; i < aerodromePoints.Length; i++)
+                if (aerodromePoints[i] != null && aerodromePoints[i].AerodromeInfo.ActiveAerodrome)
                 {
-                    _fp.Departure= SetAirport(airbases[i]);
-                    _fp.Arrival= SetAirport(airbases[i]);
+                    _fp.Departure= SetAerodrome(aerodromePoints[i]);
+                    _fp.Arrival= SetAerodrome(aerodromePoints[i]);
                 }
         }
 
@@ -69,26 +69,26 @@ namespace TacticalEditor.Models
 
         }
 
-        private T_Airport_FP SetAirport(AirBasePoint airpoints)
+        private T_Aerodrome_FP SetAerodrome(AerodromePoint airpoints)
         {
-            T_Airport_FP Airport = new T_Airport_FP();
-            Airport.KOD = new char[4];
-            Airport.NAME = new char[25];
-            Airport.KOD = "LPSK".ToCharArray();
-            Airport.LAT =  airpoints.NavigationPoint.GeoCoordinate.Latitude;
-            Airport.LON = airpoints.NavigationPoint.GeoCoordinate.Longitude;
-            Airport.dM = 0;
-            Airport.Elev = airpoints.NavigationPoint.GeoCoordinate.H;
-            Array.Copy(airpoints.AirportInfo.Name, Airport.NAME, Airport.NAME.Length);
-            Airport.end_code = 06;
-            Airport.end_code_side = 3;
-            Airport.LAT_RWY = airpoints.AirportInfo.Runway.Threshold.Latitude;
-            Airport.LON_RWY = airpoints.AirportInfo.Runway.Threshold.Longitude;
-            Airport.dM_RWY = 0;
-            Airport.Elev_RWY = 0;
-            Airport.L_RWY = airpoints.AirportInfo.Runway.Length;
-            Airport.Brg_RWY = airpoints.AirportInfo.Runway.Heading;
-            return Airport;
+            T_Aerodrome_FP Aerodrome = new T_Aerodrome_FP();
+            Aerodrome.KOD = new char[4];
+            Aerodrome.NAME = new char[25];
+            Aerodrome.KOD = "LPSK".ToCharArray();
+            Aerodrome.LAT =  airpoints.NavigationPoint.GeoCoordinate.Latitude;
+            Aerodrome.LON = airpoints.NavigationPoint.GeoCoordinate.Longitude;
+            Aerodrome.dM = 0;
+            Aerodrome.Elev = airpoints.NavigationPoint.GeoCoordinate.H;
+            Array.Copy(airpoints.AerodromeInfo.Name, Aerodrome.NAME, Aerodrome.NAME.Length);
+            Aerodrome.end_code = 06;
+            Aerodrome.end_code_side = 3;
+            Aerodrome.LAT_RWY = airpoints.AerodromeInfo.Runway.Threshold.Latitude;
+            Aerodrome.LON_RWY = airpoints.AerodromeInfo.Runway.Threshold.Longitude;
+            Aerodrome.dM_RWY = 0;
+            Aerodrome.Elev_RWY = 0;
+            Aerodrome.L_RWY = airpoints.AerodromeInfo.Runway.Length;
+            Aerodrome.Brg_RWY = airpoints.AerodromeInfo.Runway.Heading;
+            return Aerodrome;
         }
 
         private T_PPM_FP SetPpm(PpmPoint ppm)
@@ -115,7 +115,7 @@ namespace TacticalEditor.Models
         * \brief Структура аэродрома и ВПП
         **/
         [StructLayout(LayoutKind.Sequential, Pack = 4)]
-        struct T_Airport_FP
+        struct T_Aerodrome_FP
         {
           [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
           public char[] KOD;                 /* Kод аэродрома												-	[б/р]*/
@@ -158,8 +158,8 @@ namespace TacticalEditor.Models
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
             public char[] NameRoute; /**< Имя загружаемого маршрута			                -		[б/р]*/
             public int PM; /**< Количество ППМ в загружаемом маршруте	                    0-149	[б/р]*/
-            public T_Airport_FP Departure; /**< Структура аэродрома вылета                  -		[б/р]*/
-            public T_Airport_FP Arrival; /**< Структура аэродрома посадки                   -		[б/р]*/
+            public T_Aerodrome_FP Departure; /**< Структура аэродрома вылета                  -		[б/р]*/
+            public T_Aerodrome_FP Arrival; /**< Структура аэродрома посадки                   -		[б/р]*/
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 149)]
             public T_PPM_FP[] WayPoint; /**< Структура ППМ маршрута                         -		[б/р]*/
         }

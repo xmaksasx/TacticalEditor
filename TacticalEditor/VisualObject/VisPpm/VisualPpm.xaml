@@ -8,7 +8,7 @@
 	ClipToBounds="True"
 	PreviewMouseLeftButtonDown="VisualPoint_OnPreviewMouseLeftButtonDown"
 	PreviewMouseLeftButtonUp="VisualPoint_OnPreviewMouseLeftButtonUp"
-	PreviewMouseMove="VisualPoint_OnPreviewMouseMove">
+	PreviewMouseMove="VisualPoint_OnPreviewMouseMove" MouseDoubleClick="UserControl_MouseDoubleClick">
 	<Grid ClipToBounds="True">
 		<Grid
 			x:Name="Root"
