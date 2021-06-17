@@ -150,7 +150,7 @@
                             x:Name="RouteCube"
                             Click="RouteCube_OnClick"
                             Style="{StaticResource MaterialDesignFlatButton}">
-                            <materialDesign:PackIcon Kind="Routes" />
+                            <materialDesign:PackIcon Kind="Routes"/>
                         </Button>
                         <Button
                             x:Name="RouteBox"

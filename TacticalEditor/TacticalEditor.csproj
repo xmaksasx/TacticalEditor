@@ -116,7 +116,7 @@
     <Compile Include="VisualObject\VisPpm\VisualPpm.xaml.cs">
       <DependentUpon>VisualPpm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WorkingPoints\AirBaseWorker.cs" />
+    <Compile Include="WorkingPoints\AerodromeWorker.cs" />
     <Compile Include="WorkingPoints\AircraftWorker.cs" />
     <Compile Include="WorkingPoints\PpmWorker.cs" />
     <Page Include="MainWindow.xaml">

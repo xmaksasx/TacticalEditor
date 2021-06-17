@@ -30,7 +30,7 @@ namespace TacticalEditor.Helpers
             _sendLandingStruct = new SendLandingStruct();
             _sendAircraftStruct = new SendAircraftStruct();
             _sendRouteToIup = new SendRouteToIup();
-            _calculatePpmPoints = new CalculatePpmPoints();
+			_calculatePpmPoints = new CalculatePpmPoints();
             _calculateAerodromes = new CalculateAerodromes();
             _sendToSvvo = new SendToSvvo();
             _changeNp = new ChangeNp();
@@ -45,9 +45,9 @@ namespace TacticalEditor.Helpers
         {
             while (IsLooping)
             {
-				//_udpHelper.Send(_sendLandingStruct.GetByte(), "255.255.255.255", 20020);
+                //_udpHelper.Send(_sendLandingStruct.GetByte(), "255.255.255.255", 20020);
                 //_udpHelper.Send(_sendRouteToIup.GetByteNp(), "127.0.0.1", 20020);
-               // _udpHelper.Send(_sendRouteToIup.GetByteAerodromes(), "192.168.1.56", 30043);
+                _udpHelper.Send(_sendToSvvo.GetByteNp(), "127.0.0.1", 20020);
                 Thread.Sleep(20);
                 EventsHelper.OnDebugNumberEvent();
             }

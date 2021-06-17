@@ -44,24 +44,22 @@ namespace TacticalEditor.Send
 
 			for (int i = 0; i < ppmPoints.Length; i++)
 			{
-				if (ppmPoints[i] == null) continue;
+				if (ppmPoints[i] == null)
+				{
+					_routeToIup.NavigationPoints[i] = new NavigationPoint(){Type = -1};
+					continue;
+				}
 				_routeToIup.CountPoints++;
 				_routeToIup.NavigationPoints[i] = ppmPoints[i].NavigationPoint;
 
 			}
-			int s = Marshal.SizeOf(_routeToIup);
-			int s1 = Marshal.SizeOf(_routeToIup.ArrivalAerodrome);
-			int s2 = Marshal.SizeOf(_routeToIup.NavigationPoints[0]);
-	
-
-			var dgram = GetByteNp();
-			_sendClient?.Send(dgram, dgram.Length, "127.0.0.1", 20020);
 		}
 
 		List<byte> result = new List<byte>();
 
 		public byte[] GetByteNp()
 		{
+			_routeToIup.Head = _routeToIup.SetHead("Route", "Route");
 			result.Clear();
 			result.AddRange(_routeToIup.Head);
 			result.AddRange(BitConverter.GetBytes(_routeToIup.CountPoints));
