@@ -25,6 +25,38 @@ namespace TacticalEditor.Send
             _aerodromePoint = aerodromePoint;
         }
 
+        public void SetAircraft(AircraftPosition aircraft)
+        {
+            double lat = aircraft.GeoCoordinate.Latitude;
+            double lon = aircraft.GeoCoordinate.Longitude;
+
+            if (aircraft.IsDegree==0)
+			{
+                _coordinateHelper.LocalCordToLatLon(
+                    _aerodromePoint.AerodromeInfo.Runway.Threshold.Latitude, 
+                    _aerodromePoint.AerodromeInfo.Runway.Threshold.Longitude, 
+                    aircraft.GeoCoordinate.X, 
+                    aircraft.GeoCoordinate.Z,
+                    out lat, 
+                    out lon);
+            }
+            
+            _aircraft.Kren = aircraft.Kren;
+            _aircraft.Risk = aircraft.Risk;
+            _aircraft.Tang = aircraft.Tang;
+            _aircraft.HLand = aircraft.GeoCoordinate.H;
+            _aircraft.GeoCoordinate.Latitude = lat;
+            _aircraft.GeoCoordinate.Longitude = lon;
+            _aircraft.GeoCoordinate.X = aircraft.GeoCoordinate.X;
+            _aircraft.GeoCoordinate.Z = aircraft.GeoCoordinate.Z;
+            _aircraft.GeoCoordinate.H = aircraft.GeoCoordinate.H;
+            _aircraft.V = aircraft.V;
+
+            EventsHelper.OnChangeAircraftCoordinateEvent(_aircraft);
+        }
+
+
+
         public byte[] GetByte(AircraftPosition aircraft)
         {
             _coordinateHelper.LocalCordToLatLon(_aerodromePoint.AerodromeInfo.Runway.Threshold.Latitude,_aerodromePoint.AerodromeInfo.Runway.Threshold.Longitude, aircraft.GeoCoordinate.X, aircraft.GeoCoordinate.Z,

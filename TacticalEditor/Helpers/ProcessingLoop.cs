@@ -69,9 +69,11 @@ namespace TacticalEditor.Helpers
         {
 	        switch (header)
 	        {
-		        case "Aircraft_Position":
+		        case "AircraftPosition":
 			        ConvertHelper.ByteToObject(receivedBytes, _aircraftPosition);
-			        break;
+                    _sendAircraftStruct.SetAircraft(_aircraftPosition);
+
+                    break;
 		        case "Reset_Position":
 			        _aircraftPosition.GeoCoordinate.X = 0;
 			        _aircraftPosition.GeoCoordinate.Z = 0;

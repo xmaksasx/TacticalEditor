@@ -8,6 +8,9 @@ namespace TacticalEditor.Models
     class AircraftPosition: Header
     {
 
+        [Description("Признак того что координаты в градусах")]
+        public double IsDegree;
+
         [Description("угол тангажа угол между продольной осью ОХ связанной с.к.и горизонтом, [град]")]
         public double Tang;
 

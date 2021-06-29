@@ -80,7 +80,7 @@ namespace TacticalEditor.WorkingPoints
             aerodromePoint.AerodromeInfo.Runway.Heading = aerodrome.Runway[0].DirectCourse.Threshold.Heading;
             aerodromePoint.Guid = new Guid(aerodrome.Guid);
 
-            if (aerodrome.Name == "Lipetsk")
+            if (aerodrome.Name == "Adler")
             {
                 aerodromePoint.AerodromeInfo.ActiveAerodrome = true;
                 aerodromePoint.NavigationPoint.Measure.Psi = aerodrome.Runway[0].DirectCourse.Threshold.Heading;
