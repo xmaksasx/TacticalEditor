@@ -29,6 +29,8 @@ namespace TacticalEditor.Send
         {
             double lat = aircraft.GeoCoordinate.Latitude;
             double lon = aircraft.GeoCoordinate.Longitude;
+            double x = aircraft.GeoCoordinate.X;
+            double z = aircraft.GeoCoordinate.Z;
 
             if (aircraft.IsDegree==0)
 			{
@@ -40,15 +42,25 @@ namespace TacticalEditor.Send
                     out lat, 
                     out lon);
             }
-            
+            if (aircraft.IsDegree == 1)
+            {
+	            _coordinateHelper.LocalCordToXZ(
+		            _aerodromePoint.AerodromeInfo.Runway.Threshold.Latitude,
+		            _aerodromePoint.AerodromeInfo.Runway.Threshold.Longitude,
+		            aircraft.GeoCoordinate.Latitude,
+		            aircraft.GeoCoordinate.Longitude,
+		            out x,
+		            out z);
+            }
+
             _aircraft.Kren = aircraft.Kren;
             _aircraft.Risk = aircraft.Risk;
             _aircraft.Tang = aircraft.Tang;
             _aircraft.HLand = aircraft.GeoCoordinate.H;
             _aircraft.GeoCoordinate.Latitude = lat;
             _aircraft.GeoCoordinate.Longitude = lon;
-            _aircraft.GeoCoordinate.X = aircraft.GeoCoordinate.X;
-            _aircraft.GeoCoordinate.Z = aircraft.GeoCoordinate.Z;
+            _aircraft.GeoCoordinate.X = x;
+            _aircraft.GeoCoordinate.Z = z;
             _aircraft.GeoCoordinate.H = aircraft.GeoCoordinate.H;
             _aircraft.V = aircraft.V;
 
