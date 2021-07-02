@@ -90,7 +90,7 @@ namespace TacticalEditor.WorkingPoints
 
         private void PrepareThreshold(AerodromePoint aerodromePoint, Aerodrome aerodrome)
         {
-         
+            aerodromePoint.AerodromeInfo.Runway = new RunwayInfo();
             aerodromePoint.AerodromeInfo.Runway.Threshold.H = aerodrome.Altitude;
             aerodromePoint.AerodromeInfo.Runway.Threshold.Latitude = aerodrome.Runway[0].DirectCourse.Threshold.Latitude;
             aerodromePoint.AerodromeInfo.Runway.Threshold.Longitude = aerodrome.Runway[0].DirectCourse.Threshold.Longitude;
