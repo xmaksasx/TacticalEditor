@@ -6,6 +6,10 @@ namespace TacticalEditor.VisualObject.VisAerodrome
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class AerodromeInfo
     {
+	    public AerodromeInfo()
+	    {
+		    Runway = new RunwayInfo();
+	    }
         /// <summary>
         /// Название аэропорта на кириллице
         /// </summary>

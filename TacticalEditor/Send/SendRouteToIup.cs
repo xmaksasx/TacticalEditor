@@ -38,7 +38,7 @@ namespace TacticalEditor.Send
 
         private void SetAerodrome(AerodromePoint aerodromePoint, Aerodrome aerodrome)
         {
-            Array.Copy(ToBigEndian(aerodromePoint.AerodromeInfo.RusName), aerodrome.Name, aerodrome.Name.Length);
+           Array.Copy(ToBigEndian(aerodromePoint.AerodromeInfo.RusName), aerodrome.Name, aerodrome.Name.Length);
             aerodrome.Runway = aerodromePoint.AerodromeInfo.Runway;
         }
 
@@ -50,7 +50,7 @@ namespace TacticalEditor.Send
             {
                 if (ppmPoints[i] == null) continue;
                     _routeToIup.CountPoints++;
-                _routeToIup.NavigationPoints[i] = ppmPoints[i].NavigationPoint;
+               _routeToIup.NavigationPoints[i] = ppmPoints[i].NavigationPoint;
 
             }
         }
@@ -97,7 +97,7 @@ namespace TacticalEditor.Send
             _routeToIup.DepartureAerodrome.Runway = _aerodromePoint.AerodromeInfo.Runway;
             _routeToIup.ArrivalAerodrome.Runway = _aerodromePoint.AerodromeInfo.Runway;
             result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.DepartureAerodrome));
-       //     result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.ArrivalAerodrome));
+            result.AddRange(ConvertHelper.ObjectToByte(_routeToIup.ArrivalAerodrome));
             byte[] bytes = result.ToArray();// ConvertHelper.ObjectToByte(_routeToIup);
 
             for (int i = 68; i < bytes.Length; i += 8)
@@ -170,6 +170,8 @@ namespace TacticalEditor.Send
         public RunwayInfo Runway;
         
     }
+
+   
 
 
 }

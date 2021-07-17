@@ -50,8 +50,7 @@ namespace TacticalEditor.Send
 					continue;
 				}
 				_routeToIup.CountPoints++;
-				_routeToIup.NavigationPoints[i] = ppmPoints[i].NavigationPoint;
-
+				_routeToIup.NavigationPoints[i]= ppmPoints[i].NavigationPoint;
 			}
 		}
 
