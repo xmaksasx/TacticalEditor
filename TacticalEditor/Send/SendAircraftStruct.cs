@@ -13,7 +13,7 @@ namespace TacticalEditor.Send
 
         public SendAircraftStruct()
         {
-            _aerodromePoint = new AerodromePoint();
+           
             _coordinateHelper = new CoordinateHelper();
             _aircraft= new AircraftPosition();
             _aircraft.Head = _aircraft.GetHead("Aircraft_Position");
@@ -27,6 +27,7 @@ namespace TacticalEditor.Send
 
         public void SetAircraft(AircraftPosition aircraft)
         {
+            if (_aerodromePoint == null) return;
             double lat = aircraft.GeoCoordinate.Latitude;
             double lon = aircraft.GeoCoordinate.Longitude;
             double x = aircraft.GeoCoordinate.X;
